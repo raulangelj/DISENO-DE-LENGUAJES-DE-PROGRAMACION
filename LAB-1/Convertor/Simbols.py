@@ -75,4 +75,7 @@ class Operators():
 	'''
 	def get_agrupation_simbols(self):
 		return self.agrupation
+
+	def get_simbols(self):
+		return list(self.get_operators() + [PLUS_SIMBOL, OPTIONAL_SIMBOL])
 	

@@ -51,10 +51,14 @@ class Convertor():
                     exp = self.find_expresion(expression[:index])
                     start_index = new_expression[:].rfind(exp)
                     new_expression = f'{new_expression[:start_index]}{OPEN_AGRUPATION_SIMBOL}{exp}{UNION_SIMBOL}{EMPTY_SIMBOL}{CLOSE_AGRUPATION_SIMBOL}{CONCATENATION_SIMBOL if self.is_not_last_and_next_is_not_operator(expression, index) and expression[index + 1] != CLOSE_AGRUPATION_SIMBOL else ""}'
+                if expression[index - 1] in self.operators.get_simbols():
+                    exp = self.find_expresion(new_expression)
+                    start_index = new_expression[:].rfind(exp)
+                    new_expression = f'{new_expression[:start_index]}{OPEN_AGRUPATION_SIMBOL}{exp}{UNION_SIMBOL}{EMPTY_SIMBOL}{CLOSE_AGRUPATION_SIMBOL}{CONCATENATION_SIMBOL if self.is_not_last_and_next_is_not_operator(expression, index) and expression[index + 1] != CLOSE_AGRUPATION_SIMBOL else ""}'
                 else:
                     # IF the caracter before ? is not a close agrupation WE NEED TO ADD A OPEN AGRUPATION SIMBOL BEFORE THE CARACTER AND ADD (|ε) AFTER THE CARACTER AND A CLOSE AGRUPATION SIMBOL
                     letter = expression[index - 1]
-                    start_index = start_index = new_expression[:].rfind(letter)
+                    start_index = new_expression[:].rfind(letter)
                     new_expression = f'{new_expression[:start_index]}{OPEN_AGRUPATION_SIMBOL}{letter}{UNION_SIMBOL}{EMPTY_SIMBOL}{CLOSE_AGRUPATION_SIMBOL}{CONCATENATION_SIMBOL if self.is_not_last_and_next_is_not_operator(expression, index) and expression[index + 1] != CLOSE_AGRUPATION_SIMBOL else ""}'
             # * Plus simbol (+)
             elif caracter == PLUS_SIMBOL:
@@ -62,11 +66,20 @@ class Convertor():
                 if expression[index - 1] == CLOSE_AGRUPATION_SIMBOL:
                     # iterate over the expression backwards to find the open agrupation
                     exp = self.find_expresion(expression[:index])
-                    new_expression += f'{exp}{KLEENE_SIMBOL}'
+                    start_index = new_expression[:].rfind(exp)
+                    new_expression = f'{new_expression[:start_index]}{OPEN_AGRUPATION_SIMBOL}{exp}{CONCATENATION_SIMBOL}{exp}{KLEENE_SIMBOL}{CLOSE_AGRUPATION_SIMBOL}{CONCATENATION_SIMBOL if self.is_not_last_and_next_is_not_operator(expression, index) and expression[index + 1] != CLOSE_AGRUPATION_SIMBOL else ""}'
+                    # new_expression += f'{exp}{KLEENE_SIMBOL}'
+                elif expression[index - 1] in self.operators.get_simbols():
+                    # iterate over the expression backwards to find the open agrupation
+                    exp = self.find_expresion(new_expression)
+                    start_index = new_expression[:].rfind(exp)
+                    new_expression = f'{new_expression[:start_index]}{OPEN_AGRUPATION_SIMBOL}{exp}{CONCATENATION_SIMBOL}{exp}{KLEENE_SIMBOL}{CLOSE_AGRUPATION_SIMBOL}'
                 else:
                     # IF the caracter before ? is not a close agrupation WE NEED TO ADD A OPEN AGRUPATION SIMBOL BEFORE THE CARACTER AND ADD (|ε) AFTER THE CARACTER AND A CLOSE AGRUPATION SIMBOL
                     letter = expression[index - 1]
-                    new_expression += f'{letter}{KLEENE_SIMBOL}'
+                    start_index = start_index = new_expression[:].rfind(letter)
+                    new_expression = f'{new_expression[:start_index]}{OPEN_AGRUPATION_SIMBOL}{letter}{CONCATENATION_SIMBOL}{letter}{KLEENE_SIMBOL}{CLOSE_AGRUPATION_SIMBOL}{CONCATENATION_SIMBOL if self.is_not_last_and_next_is_not_operator(expression, index) and expression[index + 1] != CLOSE_AGRUPATION_SIMBOL else ""}'
+                    # new_expression += f'{letter}{KLEENE_SIMBOL}'
             # * (kleene simbol)
             # validation to add a concatenation (·) after kleene star (*) if it is not the last caracter and the next caracter is not a operator and the next caracter is not a agrupation
             elif (

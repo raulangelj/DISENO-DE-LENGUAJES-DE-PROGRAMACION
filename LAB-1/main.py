@@ -12,13 +12,15 @@ def main():
         print(initial_menu)
         option = input("Select an option: ")
         if option == "1":
+            print('===============\nConvert from infix to postfix\nTo exit enter "exit"\n===============\n')
             expression = input("Enter a regular expression: ")
-            print(f"You entered: {expression}")
-            convertor = Convertor()
-            postfix = convertor.convert_from_infix_to_postfix(expression)
-            print(f"Postfix: {postfix}")
-
-        elif option == "2":
+            while expression != "exit":
+                print(f"You entered: {expression}")
+                convertor = Convertor()
+                postfix = convertor.convert_from_infix_to_postfix(expression)
+                print(f"Postfix: {postfix}")
+                expression = input("Enter a regular expression: ").lower()
+        elif option.lower() in ["2", "exit"]:
             print("Bye!")
             exit_app = True
 

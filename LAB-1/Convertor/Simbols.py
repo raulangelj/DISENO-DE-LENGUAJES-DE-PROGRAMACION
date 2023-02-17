@@ -1,3 +1,12 @@
+KLEENE_SIMBOL = '*'
+CONCATENATION_SIMBOL = '·'
+UNION_SIMBOL = '|'
+OPEN_AGRUPATION_SIMBOL = '('
+CLOSE_AGRUPATION_SIMBOL = ')'
+OPTIONAL_SIMBOL = '?'
+EMPTY_SIMBOL = 'ε'
+PLUS_SIMBOL = '+'
+
 '''
 	Class Operators
 	Contains the list of operatos and their priority
@@ -9,11 +18,11 @@ class Operators():
 	'''
 	def __init__(self):
 		self.operators = {
-			'*': 3, # kleene
-			'.': 2, # concatenation
-			'|': 1, # union (or)
+			KLEENE_SIMBOL: 3, # kleene
+			CONCATENATION_SIMBOL: 2, # concatenation
+			UNION_SIMBOL: 1, # union (or)
 		}
-		self.agrupation = ['(', ')']
+		self.agrupation = [OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL]
 
 	'''
 		Return the priority of a operator
@@ -30,6 +39,12 @@ class Operators():
 	'''
 	def is_operator(self, operator):
 		return operator in self.operators
+
+	'''
+		Return the list of the operators with out the priority
+	'''
+	def get_operators(self):
+		return list(self.operators.keys())
 
 	'''
 		if value is a left agrupation
@@ -54,4 +69,10 @@ class Operators():
 	'''
 	def is_agrupation(self, operator):
 		return operator in self.agrupation
+
+	'''
+		Return the list of agrupation simbols
+	'''
+	def get_agrupation_simbols(self):
+		return self.agrupation
 	

@@ -1,8 +1,8 @@
-KLEENE_SIMBOL = '*'
-CONCATENATION_SIMBOL = '·'
-UNION_SIMBOL = '|'
-OPEN_AGRUPATION_SIMBOL = '('
-CLOSE_AGRUPATION_SIMBOL = ')'
+from collections import Counter
+from Convertor.Operators.Kleene import Kleene
+from Convertor.Operators.Concat import Concat
+from Convertor.Operators.Or import Or
+
 OPTIONAL_SIMBOL = '?'
 EMPTY_SIMBOL = 'ε'
 PLUS_SIMBOL = '+'
@@ -17,12 +17,15 @@ class Operators():
 		List of operators and their priority
 	'''
 	def __init__(self):
+		self.kleen = Kleene()
+		self.concat = Concat()
+		self.or_op = Or()
 		self.operators = {
-			KLEENE_SIMBOL: 3, # kleene
-			CONCATENATION_SIMBOL: 2, # concatenation
-			UNION_SIMBOL: 1, # union (or)
+			self.kleen.get_simbol(): self.kleen.get_priority(),
+			self.concat.get_simbol(): self.concat.get_priority(),
+			self.or_op.get_simbol(): self.or_op.get_priority()
 		}
-		self.agrupation = [OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL]
+		self.agrupation = self.kleen.get_agrupation_simbols()
 
 	'''
 		Return the priority of a operator
@@ -39,12 +42,6 @@ class Operators():
 	'''
 	def is_operator(self, operator):
 		return operator in self.operators
-
-	'''
-		Return the list of the operators with out the priority
-	'''
-	def get_operators(self):
-		return list(self.operators.keys())
 
 	'''
 		if value is a left agrupation
@@ -71,11 +68,41 @@ class Operators():
 		return operator in self.agrupation
 
 	'''
-		Return the list of agrupation simbols
+		Validate the expression
+		@param expression: expression to validate (str)
+		@return: expression validated (str)
 	'''
-	def get_agrupation_simbols(self):
-		return self.agrupation
+	def evaluate_rules(self, expression):
+		self.validate_agrupations(expression)
+		factors = []
+		final_exp = ''
+		index = 0
+		# for index, caracter in enumerate(expression):
+		while index < len(expression):
+			caracter = expression[index]
+			if caracter is self.kleen.get_simbol():
+				kleen_operator, move = self.kleen.validate(factors, index)
+				del factors[-move:]
+				factors.append(kleen_operator)
+				# factors.append(self.kleen.validate(factors, index))
+			elif caracter is self.or_op.get_simbol():
+				or_operator, move, forward = self.or_op.validate(factors, index, expression)
+				del factors[-move:]
+				factors.append(or_operator)
+				index += move if forward else 1
+			else:
+				factors.append(caracter)
+			index += 1
+		final_exp, _ = self.concat.validate(factors)
+		return final_exp
 
-	def get_simbols(self):
-		return list(self.get_operators() + [PLUS_SIMBOL, OPTIONAL_SIMBOL])
-	
+	'''
+		Validate the agrupations
+		@param expression: expression to validate (str)
+		@return: is_valid (bool)
+	'''
+	def validate_agrupations(self, expression):
+		c = Counter(expression)
+		if c[self.agrupation[0]] != c[self.agrupation[1]]:
+			raise Exception('Invalid agrupation')
+		return True

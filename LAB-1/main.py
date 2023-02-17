@@ -18,8 +18,9 @@ def main():
                 print(f"You entered: {expression}")
                 convertor = Convertor()
                 postfix = convertor.convert_from_infix_to_postfix(expression)
-                print(f"Postfix: {postfix}")
-                expression = input("Enter a regular expression: ").lower()
+                if postfix is not None:
+                    print(f"Postfix: {postfix}")
+                expression = input("\nEnter a regular expression: ").lower()
         elif option.lower() in ["2", "exit"]:
             print("Bye!")
             exit_app = True

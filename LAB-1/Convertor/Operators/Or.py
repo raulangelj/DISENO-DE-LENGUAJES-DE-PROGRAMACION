@@ -1,5 +1,5 @@
 from Convertor.Operators.Operator import Operator
-from Convertor.Operators.Constants import UNION_SIMBOL, KLEENE_SIMBOL
+from Convertor.Operators.Constants import UNION_SIMBOL, KLEENE_SIMBOL, PLUS_SIMBOL, OPTIONAL_SIMBOL
 
 
 class Or(Operator):
@@ -30,13 +30,21 @@ class Or(Operator):
 			raise Exception(self.errors[0])
 		# [actual , '(', ...]
 		elif caracter_after is self.agrupation[0]:
-			agrupation_or, positions_move = self.find_agrupation(
-				expression, True)
+			# agrupation_or, positions_move = self.find_agrupation(
+			# 	expression, True, index)
+			agrupation_or, positions_move = self.find_agrupation_forward(
+				expression, index)
+			if KLEENE_SIMBOL or UNION_SIMBOL or PLUS_SIMBOL or OPTIONAL_SIMBOL in agrupation_or:
+				return agrupation_or, positions_move, True, caracter_before
 			return f'{caracter_before}{self.simbol}{agrupation_or}', positions_move, True
 		# [')', actual ...]
 		elif caracter_before is self.agrupation[1]:
 			agrupation_or, positions_move = self.find_agrupation(
-				factors, False)
+				factors)
 			return f'{agrupation_or}{self.simbol}{caracter_after}', positions_move, False
 		else:
 			return f'{caracter_before}{self.simbol}{caracter_after}', 1, False
+
+	def parse(self, agrupation_or, caracter_before='', caracter_after='', positions_move=1):
+		if caracter_before:
+			return f'{caracter_before}{self.simbol}{agrupation_or}', positions_move, True

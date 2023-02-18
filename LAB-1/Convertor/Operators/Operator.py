@@ -1,10 +1,11 @@
-from Convertor.Operators.Constants import OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL
+from Convertor.Operators.Constants import OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL, EMPTY_SIMBOL
 
 
 class Operator():
 	def __init__(self):
 		self.simbol = ''
 		self.priority = -1
+		self.empty_simbol = EMPTY_SIMBOL
 		self.agrupation = [OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL]
 
 	def get_simbol(self):
@@ -25,13 +26,12 @@ class Operator():
 		@param forward: if the agrupation is forward or backward
 		@return: the agrupation expresion and the number of positions to move
 	'''
-	def find_agrupation(self, expresion, forward=False):
-		step = 1 if forward else -1
+	def find_agrupation(self, expresion):
 		close_agrupation_count = 0
 		start_expresion = False
 		agrupation_exp = []
 		positions_move = 0
-		for i in range(len(expresion) - 1, -1, step):
+		for i in range(len(expresion) - 1, -1, -1):
 			caracter = expresion[i]
 			if caracter == self.agrupation[1]:
 				start_expresion = True
@@ -45,5 +45,22 @@ class Operator():
 				positions_move += 1
 				break
 			positions_move += 1
-		# TODO: raise expection if there are more open agrupations than close agrupations
+		return ''.join(agrupation_exp), positions_move
+
+	def find_agrupation_forward(self, expression, index):
+		agrupation_exp = []
+		positions_move = 0
+		open_agrupation_count = 0
+		for i in range(index + 1, len(expression)):
+			caracter = expression[i]
+			if caracter == self.agrupation[0]:
+				open_agrupation_count += 1
+			if open_agrupation_count > 0:
+				agrupation_exp.append(caracter)
+			if caracter == self.agrupation[1] and open_agrupation_count > 0:
+				open_agrupation_count -= 1
+			if open_agrupation_count == 0:
+				positions_move += 1
+				break
+			positions_move += 1
 		return ''.join(agrupation_exp), positions_move

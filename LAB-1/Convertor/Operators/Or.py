@@ -9,6 +9,7 @@ class Or(Operator):
 		self.priority = 1
 		self.errors = [
 			'Invalid expresion: kleene can\'t be the first simbol or its second operator be a kleene/union/optional/plus.\n',
+			'Invalid expresion: missing one operator.'
 		]
 
 	'''
@@ -28,6 +29,8 @@ class Or(Operator):
 		if len(factors) == 0 or caracter_after in [self.simbol, self.kleene_simbol, self.optional_simbol, self.plus_simbol]:
 			# * can't be the first simbol or its second operator be a kleene/union/optional/plus
 			raise Exception(self.errors[0])
+		elif not caracter_after:
+			raise Exception(self.errors[1])
 		# [actual , '(', ...]
 		elif caracter_after is self.agrupation[0]:
 			# agrupation_or, positions_move = self.find_agrupation(

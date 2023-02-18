@@ -1,4 +1,4 @@
-from Convertor.Operators.Constants import OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL, EMPTY_SIMBOL
+from Convertor.Operators.Constants import OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL, EMPTY_SIMBOL, CONCATENATION_SIMBOL, KLEENE_SIMBOL, UNION_SIMBOL, OPTIONAL_SIMBOL, PLUS_SIMBOL
 
 
 class Operator():
@@ -6,6 +6,11 @@ class Operator():
 		self.simbol = ''
 		self.priority = -1
 		self.empty_simbol = EMPTY_SIMBOL
+		self.concatenation_simbol = CONCATENATION_SIMBOL
+		self.kleene_simbol = KLEENE_SIMBOL
+		self.union_simbol = UNION_SIMBOL
+		self.optional_simbol = OPTIONAL_SIMBOL
+		self.plus_simbol = PLUS_SIMBOL
 		self.agrupation = [OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL]
 
 	def get_simbol(self):
@@ -14,7 +19,7 @@ class Operator():
 	def get_priority(self):
 		return self.priority
 
-	def evaluate(self, expresion, index):
+	def validate(self, expresion, index):
 		return expresion
 
 	def get_agrupation_simbols(self):

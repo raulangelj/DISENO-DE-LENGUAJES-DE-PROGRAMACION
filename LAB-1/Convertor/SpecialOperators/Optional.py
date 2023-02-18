@@ -14,7 +14,7 @@ class Optional(Operator):
 		]
 
 	def validate(self, factors, index):  # sourcery skip: raise-specific-error
-		caracter_before = factors[-1]
+		caracter_before = factors[-1] if len(factors) > 0 else ''
 		if len(factors) == 0 or caracter_before is self.or_op.simbol:
 			raise Exception(self.errors[0])
 		# [')', actual ...]

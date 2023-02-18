@@ -3,6 +3,7 @@ from Convertor.Operators.Kleene import Kleene
 from Convertor.Operators.Concat import Concat
 from Convertor.Operators.Or import Or
 from Convertor.SpecialOperators.Optional import Optional
+from Convertor.SpecialOperators.Plus import Plus
 
 
 '''
@@ -19,6 +20,7 @@ class Operators():
 		self.concat = Concat()
 		self.or_op = Or()
 		self.optional = Optional()
+		self.plus = Plus()
 		self.operators = {
 			self.kleen.get_simbol(): self.kleen.get_priority(),
 			self.concat.get_simbol(): self.concat.get_priority(),
@@ -96,6 +98,10 @@ class Operators():
 				optional_operator, move = self.optional.validate(factors, index)
 				del factors[-move:]
 				factors.append(optional_operator)
+			elif caracter is self.plus.get_simbol():
+				plus_operator, move = self.plus.validate(factors, index)
+				del factors[-move:]
+				factors.append(plus_operator)
 			else:
 				factors.append(caracter)
 			index += 1

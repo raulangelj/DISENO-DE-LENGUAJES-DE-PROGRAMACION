@@ -25,7 +25,7 @@ class Or(Operator):
 		caracter_after = expression[index +
 									1] if index < len(expression) - 1 else ''
 		# TODO: add the plus and optional simbols to this validation
-		if len(factors) == 0 or caracter_after in [self.simbol, KLEENE_SIMBOL]:
+		if len(factors) == 0 or caracter_after in [self.simbol, self.kleene_simbol, self.optional_simbol, self.plus_simbol]:
 			# * can't be the first simbol or its second operator be a kleene/union/optional/plus
 			raise Exception(self.errors[0])
 		# [actual , '(', ...]

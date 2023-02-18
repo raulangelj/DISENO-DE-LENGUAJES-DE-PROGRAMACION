@@ -22,9 +22,13 @@ class Kleene(Operator):
             agrupation_kleen, positons_move = self.find_agrupation(factors)
             return f'{self.agrupation[0]}{agrupation_kleen}{self.simbol}{self.agrupation[1]}', positons_move
         # ['a|b', ...]
-        elif len(caracter_before) > 1:
+        elif len(caracter_before) > 1 and UNION_SIMBOL in caracter_before:
             letter = caracter_before[-1]
             return f'{caracter_before[:-1]}{self.agrupation[0]}{letter}{self.simbol}{self.agrupation[1]}', 1
+        # ['(a*), ...]
+        elif len(caracter_before) > 1 and caracter_before[-1] is self.agrupation[1]:
+            group = caracter_before
+            return f'{self.agrupation[0]}{group}{self.simbol}{self.agrupation[1]}', 1
         else:
             inside_parenthesis = len(caracter_before) > 1
             return f'{self.agrupation[0]}{self.agrupation[0] if inside_parenthesis else ""}{caracter_before}{self.agrupation[1] if inside_parenthesis else ""}{self.simbol}{self.agrupation[1]}', 1

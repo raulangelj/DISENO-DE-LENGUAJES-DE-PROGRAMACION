@@ -26,7 +26,7 @@ class Concat(Operator):
 			is_last_factor = index == len(factors) - 1
 			has_more_than_one_factor = len(factors) > 1
 			# ['(', ...], ['a', ')'], ['a']
-			if (is_open_agrupation or is_not_two_agrupation_together or is_last_factor) and has_more_than_one_factor:
+			if (is_open_agrupation or is_not_two_agrupation_together or is_last_factor) and has_more_than_one_factor and factors[index][-1] is not self.agrupation[1]:
 				final_exp += factors[index]
 			# [')', ...]
 			elif factors[index] == self.agrupation[1] and factors[index + 1 if index < len(factors) - 1 else index] in self.simbols:
@@ -36,7 +36,7 @@ class Concat(Operator):
 				final_exp += factors[index]
 			# ['(aa)', ...]
 			elif len(factors[index]) > 1 and factors[index][0] == self.agrupation[0] and factors[index][-1] == self.agrupation[1]:
-				final_exp += f'{self.rules_concat(factors[index])}{self.simbol if index < len(factors) - 1 else ""}'
+				final_exp += f'{self.rules_concat(factors[index])}{self.add_simbol_last_factor(factors, index)}'
 			# ['a']
 			elif index == len(factors) - 1:
 				final_exp += factors[index]
@@ -50,7 +50,7 @@ class Concat(Operator):
 			caracter = agrupation[index]
 			next_index = index + 1 if index < len(agrupation) - 1 else index
 			if self.is_close_open_agrupation(caracter, agrupation[next_index]) or self.is_two_letters(caracter, agrupation[next_index]):
-				expresion_concat += f'{caracter}{self.simbol}'
+				expresion_concat += f'{caracter}{self.simbol if index < len(agrupation) - 1 else ""}'
 			else:
 				expresion_concat += caracter
 		return expresion_concat
@@ -63,3 +63,11 @@ class Concat(Operator):
 	
 	def is_two_letters(self, caracter, next_caracter):
 		return not self.is_simbol(caracter) and not self.is_simbol(next_caracter)
+
+	def add_simbol_last_factor(self, factor, index):
+		if index == len(factor) - 1:
+			return ''
+		next_caracter = factor[index + 1]
+		if next_caracter is self.agrupation[1] and factor[index][-1] is self.agrupation[1]:
+			return ''
+		return self.simbol

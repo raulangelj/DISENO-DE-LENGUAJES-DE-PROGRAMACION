@@ -6,9 +6,9 @@ from Convertor.Simbols import Operators
     Convertor.py
     Class to convert the infix expression to postfix
 '''
-class Convertor():
+class Parser():
     def __init__(self):
-        self.value = None
+        self.postfix = None
         self.algorithm = Algorithms()
         self.operators = Operators()
 
@@ -19,12 +19,15 @@ class Convertor():
         @return: postfix expression (str)
     '''
     def convert_from_infix_to_postfix(self, infix):
+        self.infix = None
+        self.postfix = None
         infix = self.parse_expression(infix)
         if infix is None:
             return None
-        print(f'Infix: {infix}')
-        self.value = self.algorithm.get_result_postfix(infix)
-        return self.value
+        # print(f'Infix: {infix}')
+        self.infix = infix
+        self.postfix = self.algorithm.get_result_postfix(infix)
+        return self.postfix
 
     '''
         This function is used to parse an expression. It takes in a parameter 'expression' and attempts to evaluate the expression using the 'operators' object. If an exception is raised, it prints the exception in red and returns None.

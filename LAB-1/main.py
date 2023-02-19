@@ -3,7 +3,7 @@
   Main class to run the program
 '''
 from Menu.Menu import initial_menu
-from Convertor.Convertor import Convertor
+from Convertor.Parser import Parser
 
 
 def main():
@@ -16,9 +16,11 @@ def main():
             expression = input("Enter a regular expression: ")
             while expression != "exit":
                 print(f"You entered: {expression}")
-                convertor = Convertor()
+                convertor = Parser()
                 postfix = convertor.convert_from_infix_to_postfix(expression)
+                infix = convertor.infix
                 if postfix is not None:
+                    print(f"Infix: {infix}")
                     print(f"Postfix: {postfix}")
                 expression = input("\nEnter a regular expression: ").lower()
         elif option.lower() in ["2", "exit"]:

@@ -1,7 +1,7 @@
 ﻿Initial,Parse,Postfix
 a(b|(a*)?)b,a·((b|((a*))|ε))·b,aba*|ε|·b·
 ab?,a·(b|ε),abε|·
-a(b|(aa)?)b,a·((b|(aa)|ε))·b,abaa|ε|·b·
+a(b|(aa)?)b,a·((b|(a·a)|ε))·b,abaa·|ε|·b·
 (a|b)?a*b,((a|b)|ε)·(a*)·b,ab|ε|a*·b·
 ab*ab*,a·(b*)·a·(b*),ab*·a·b*·
 a*b,(a*)·b,a*b·

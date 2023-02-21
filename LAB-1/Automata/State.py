@@ -1,0 +1,37 @@
+from typing import TypedDict
+from random import randint
+
+
+class StateModel():
+	value: int
+	is_final: bool
+	is_initial: bool
+	transitions: dict
+
+
+class State():
+	def __init__(self, is_final=False, is_initial=False):
+		self.value = randint(0, 9999)  # TODO change to a ordered value
+		self.is_final = is_final
+		self.is_initial = is_initial
+		self.transitions = {}  # ? Se manejaran las transiciones aqui? o mejor en el automata?
+
+	def model(self) -> StateModel:
+		return {
+			'value': self.value,
+			'is_final': self.is_final,
+			'is_initial': self.is_initial,
+			'transitions': self.transitions
+		}
+
+	def __str__(self) -> str:
+		return f'value: {self.value}, is_final: {self.is_final}, is_initial: {self.is_initial}, transitions: {self.transitions}'
+
+	def print_model(self) -> None:
+		print("+--------------------+----------+")
+		print("| State              | Value    |")
+		print("+--------------------+----------+")
+		print("|{:<20}|{:>10}|".format('Value', self.value))
+		print("|{:<20}|{:>10}|".format('Is_initial', self.is_initial))
+		print("|{:<20}|{:>10}|".format('Is_final', self.is_final))
+		print("+--------------------+----------+")

@@ -1,4 +1,6 @@
 from Convertor.Operators.Operator import Operator
+from Automata.Automata import Automata
+from Automata.EmptyToken import EmptyToken
 from Convertor.Operators.Constants import CONCATENATION_SIMBOL, UNION_SIMBOL
 
 
@@ -16,7 +18,6 @@ class Concat(Operator):
 		@param index: index of the factor to validate
 		@return: expression validated (str)
 	'''
-
 	def validate(self, factors, index=0):
 		final_exp = ''
 		for index in range(len(factors)):
@@ -71,3 +72,24 @@ class Concat(Operator):
 		if next_caracter is self.agrupation[1] and factor[index][-1] is self.agrupation[1]:
 			return ''
 		return self.simbol
+
+	def get_automata_rule(self, operator1:Automata, operator2:Automata):
+		operator1.final_state.is_final = False
+		operator2.initial_state.is_initial = False
+
+		# Create temp automata
+		automata = Automata()
+		# New initial state
+		automata.initial_state = operator1.initial_state
+		# New final state
+		automata.final_state = operator2.final_state
+		# New States
+		automata.states = operator1.states + operator2.states
+		# New Alphabet
+		automata.add_alphabet(operator1.alphabet + operator2.alphabet)
+		if EmptyToken() not in automata.alphabet:
+			automata.alphabet.append(EmptyToken())
+		# New Transitions
+		automata.transitions.transitions = operator1.transitions.transitions + operator2.transitions.transitions
+		automata.transitions.add_transition(operator1.final_state,  EmptyToken(), operator2.initial_state)
+		return automata

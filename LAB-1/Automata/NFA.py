@@ -21,6 +21,11 @@ class NFA(Automata):
 				automata_kleen = self.simbols.kleen.get_automata_rule(self.automata_stack[-1])
 				self.automata_stack.pop()
 				self.automata_stack.append(automata_kleen)
+			elif caracter == self.simbols.or_op.get_simbol():
+				automata_or = self.simbols.or_op.get_automata_rule(self.automata_stack[-2], self.automata_stack[-1])
+				self.automata_stack.pop()
+				self.automata_stack.pop()
+				self.automata_stack.append(automata_or)
 			else:
 				self.automata_stack.append(self.create_token_automata(caracter))
 		self.set_automata(self.automata_stack[0])
@@ -38,7 +43,7 @@ class NFA(Automata):
 		self.alphabet = automata.alphabet
 		self.transitions = automata.transitions
 
-	def create_graph(self) -> None:
+	def create_graph(self, fileName: str = 'NFA') -> None:
 		dot = gv.Digraph(comment='NFA Graph', format='png')
 		dot.attr(rankdir='LR', size='8,5')
 		# Nodes to graph
@@ -56,8 +61,8 @@ class NFA(Automata):
 			dot.edge(str(state_1.value), str(state_2.value), label=str(token.value))
 			dot.attr('node', shape='circle')
 		# doctest_mark_exe()
-		dot.render('LAB-1/NFA_GRPAH/NFA_GRAPH.gv').replace('\\', '/')
-		dot.render('LAB-1/NFA_GRPAH/NFA_GRAPH.gv', view=True)
+		dot.render(f'LAB-1/NFA_GRPAH/{fileName}.gv').replace('\\', '/')
+		dot.render(f'LAB-1/NFA_GRPAH/{fileName}.gv', view=True)
 		# s = Source(dot, filename='LAB-1/NFA/NFA_GRAPH.gv', format='png')
 		# s.view()
 

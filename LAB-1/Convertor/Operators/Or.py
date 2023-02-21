@@ -1,5 +1,8 @@
-from Convertor.Operators.Operator import Operator
 from Convertor.Operators.Constants import UNION_SIMBOL, KLEENE_SIMBOL, PLUS_SIMBOL, OPTIONAL_SIMBOL
+from Convertor.Operators.Operator import Operator
+from Automata.Automata import Automata
+from Automata.EmptyToken import EmptyToken
+from Automata.State import State
 
 
 class Or(Operator):
@@ -51,3 +54,31 @@ class Or(Operator):
 	def parse(self, agrupation_or, caracter_before='', caracter_after='', positions_move=1):
 		if caracter_before:
 			return f'{caracter_before}{self.simbol}{agrupation_or}', positions_move, True
+
+	def get_automata_rule(self, operator1: Automata, operator2: Automata):
+		# New first state
+		new_first_state = State(is_initial=True)
+		# New last state
+		new_last_state = State(is_final=True)
+		# Remove the old first and last states
+		operator1.initial_state.is_initial = False
+		operator1.final_state.is_final = False
+		operator2.initial_state.is_initial = False
+		operator2.final_state.is_final = False
+		# Create new automata
+		automata = Automata()
+		# Add the new states
+		automata.states = operator1.states + operator2.states + [new_first_state, new_last_state]
+		# Add the alphabet
+		automata.add_alphabet(operator1.alphabet + operator2.alphabet + [EmptyToken()])
+		# Add the transitions
+		automata.transitions.transitions = operator1.transitions.transitions + operator2.transitions.transitions
+		# Add the new transitions
+		automata.transitions.add_transition(new_first_state, EmptyToken(), operator1.initial_state)
+		automata.transitions.add_transition(new_first_state, EmptyToken(), operator2.initial_state)
+		automata.transitions.add_transition(operator1.final_state, EmptyToken(), new_last_state)
+		automata.transitions.add_transition(operator2.final_state, EmptyToken(), new_last_state)
+		# Set the new first and last states
+		automata.initial_state = new_first_state
+		automata.final_state = new_last_state
+		return automata

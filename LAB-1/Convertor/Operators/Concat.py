@@ -97,24 +97,4 @@ class Concat(Operator):
 		automata.states = operator1.states + operator2.states
 		# New Alphabet
 		automata.add_alphabet(operator1.alphabet + operator2.alphabet)
-
-
-		# operator1.final_state.is_final = False
-		# operator2.initial_state.is_initial = False
-
-		# # Create temp automata
-		# automata = Automata()
-		# # New initial state
-		# automata.initial_state = operator1.initial_state
-		# # New final state
-		# automata.final_state = operator2.final_state
-		# # New States
-		# automata.states = operator1.states + operator2.states
-		# # New Alphabet
-		# automata.add_alphabet(operator1.alphabet + operator2.alphabet)
-		# if EmptyToken() not in automata.alphabet:
-		# 	automata.alphabet.append(EmptyToken())
-		# # New Transitions
-		# automata.transitions.transitions = operator1.transitions.transitions + operator2.transitions.transitions
-		# automata.transitions.add_transition(operator1.final_state,  EmptyToken(), operator2.initial_state)
 		return automata

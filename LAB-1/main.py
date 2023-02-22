@@ -24,10 +24,11 @@ def main():
                     print(f"Infix: {infix}")
                     print(f"Postfix: {postfix}")
                     controller.create_automata(postfix)
-                    create_graph = input("Do you want to create a graph? (y/N): ")
-                    if create_graph.lower() == "y":
-                        file_name = input("Enter the file name or path for the graph: ")
-                        controller.render_graph(file_name)
+                    # create_graph = input("Do you want to create a graph? (y/N): ")
+                    # if create_graph.lower() == "y":
+                    #     file_name = input("Enter the file name or path for the graph: ")
+                    #     controller.render_graph(file_name)
+                    controller.render_graph()
                 expression = input("\nEnter a regular expression: ").lower()
         elif option.lower() in ["2", "exit"]:
             print("Bye!")

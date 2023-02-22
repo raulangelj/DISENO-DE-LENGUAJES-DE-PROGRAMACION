@@ -77,8 +77,11 @@ class Concat(Operator):
 		return self.simbol
 
 	def get_automata_rule(self, operator1:Automata, operator2:Automata):
+		# Remove the initial and final state of the operators
 		operator1.final_state.is_final = False
 		operator2.initial_state.is_initial = False
+		# Remove first state of operator2
+		missing_transitions = operator2.remove_state(operator2.initial_state)
 
 		# Create temp automata
 		automata = Automata()
@@ -86,13 +89,32 @@ class Concat(Operator):
 		automata.initial_state = operator1.initial_state
 		# New final state
 		automata.final_state = operator2.final_state
+		# New transitions 
+		automata.transitions.transitions = operator1.transitions.transitions + operator2.transitions.transitions
+		for token, final_state in missing_transitions:
+			automata.transitions.add_transition(operator1.final_state, token, final_state)
 		# New States
 		automata.states = operator1.states + operator2.states
 		# New Alphabet
 		automata.add_alphabet(operator1.alphabet + operator2.alphabet)
-		if EmptyToken() not in automata.alphabet:
-			automata.alphabet.append(EmptyToken())
-		# New Transitions
-		automata.transitions.transitions = operator1.transitions.transitions + operator2.transitions.transitions
-		automata.transitions.add_transition(operator1.final_state,  EmptyToken(), operator2.initial_state)
+
+
+		# operator1.final_state.is_final = False
+		# operator2.initial_state.is_initial = False
+
+		# # Create temp automata
+		# automata = Automata()
+		# # New initial state
+		# automata.initial_state = operator1.initial_state
+		# # New final state
+		# automata.final_state = operator2.final_state
+		# # New States
+		# automata.states = operator1.states + operator2.states
+		# # New Alphabet
+		# automata.add_alphabet(operator1.alphabet + operator2.alphabet)
+		# if EmptyToken() not in automata.alphabet:
+		# 	automata.alphabet.append(EmptyToken())
+		# # New Transitions
+		# automata.transitions.transitions = operator1.transitions.transitions + operator2.transitions.transitions
+		# automata.transitions.add_transition(operator1.final_state,  EmptyToken(), operator2.initial_state)
 		return automata

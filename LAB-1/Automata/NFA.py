@@ -14,27 +14,27 @@ class NFA(Automata):
 		for caracter in postfix:
 			if caracter == self.simbols.concat.get_simbol():
 				automata_concat = self.simbols.concat.get_automata_rule(self.automata_stack[-2], self.automata_stack[-1])
-				self.automata_stack.pop()
-				self.automata_stack.pop()
-				self.automata_stack.append(automata_concat)
+				self.add_to_automata_stack(automata_concat)
 			elif caracter == self.simbols.kleen.get_simbol():
-				automata_kleen = self.simbols.kleen.get_automata_rule(self.automata_stack[-1])
+				automata_kleen = self.simbols.kleen.get_automata_rule(self.automata_stack[-1], state_counter=self.get_state_counter())
 				self.automata_stack.pop()
 				self.automata_stack.append(automata_kleen)
+				self.state_counter += 1
 			elif caracter == self.simbols.or_op.get_simbol():
-				automata_or = self.simbols.or_op.get_automata_rule(self.automata_stack[-2], self.automata_stack[-1])
-				self.automata_stack.pop()
-				self.automata_stack.pop()
-				self.automata_stack.append(automata_or)
+				automata_or = self.simbols.or_op.get_automata_rule(self.automata_stack[-2], self.automata_stack[-1], state_counter=self.get_state_counter())
+				self.add_to_automata_stack(automata_or)
+				self.state_counter += 1
 			else:
-				self.automata_stack.append(self.create_token_automata(caracter))
+				self.automata_stack.append(self.create_token_automata(caracter, self.get_state_counter()))
+				self.state_counter += 1
 		self.set_automata(self.automata_stack[0])
-		# self.initial_state.print_model()
-		# self.final_state.print_model()
-		# self.print_states()
-		# self.print_alphabet()
-		# self.transitions.print_transitions()
+		# self.print_automata()
 		return self
+
+	def add_to_automata_stack(self, automata: Automata) -> None:
+		self.automata_stack.pop()
+		self.automata_stack.pop()
+		self.automata_stack.append(automata)
 
 	def set_automata(self, automata: Automata) -> None:
 		self.initial_state = automata.initial_state
@@ -44,18 +44,18 @@ class NFA(Automata):
 		self.transitions = automata.transitions
 
 	def create_graph(self, fileName: str = 'NFA') -> None:
-		dot = gv.Digraph(comment='NFA Graph', format='png')
-		dot.attr(rankdir='LR', size='8,5')
+		dot = gv.Digraph(comment='NFA Graph')
+		dot.attr(rankdir='LR')
 		# Nodes to graph
 		for state in self.states:
 			if state.is_final:
-				dot.attr('node', shape='doublecircle')
+				dot.node(str(state.value), str(state.value), shape='doublecircle')
+			elif state.is_initial:
+				dot.node(str(state.value), str(state.value), shape='point')
 			else:
-				dot.attr('node', shape='circle')
-			dot.node(str(state.value), str(state.value))
+				dot.node(str(state.value), str(state.value), shape='circle')
 		# Edges to graph
 		for state_1, token, state_2 in self.transitions.transitions:
-			state_2.print_model()
 			if state_2.is_final:
 				dot.attr('node', shape='doublecircle')
 			dot.edge(str(state_1.value), str(state_2.value), label=str(token.value))
@@ -66,15 +66,4 @@ class NFA(Automata):
 		# s = Source(dot, filename='LAB-1/NFA/NFA_GRAPH.gv', format='png')
 		# s.view()
 
-	def print_states(self) -> None:
-		print('+---------- States ----------+')
-		for state in self.states:
-			state.print_model()
-		print('+-----------------------------+')
-
-	def print_alphabet(self) -> None:
-		print('+---------- Alphabet ----------+')
-		for token in self.alphabet:
-			token.print_token()
-		print('+-------------------------------+')
 

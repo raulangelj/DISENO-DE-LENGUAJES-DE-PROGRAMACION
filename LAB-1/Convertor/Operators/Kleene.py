@@ -36,11 +36,12 @@ class Kleene(Operator):
             inside_parenthesis = len(caracter_before) > 1
             return f'{self.agrupation[0]}{self.agrupation[0] if inside_parenthesis else ""}{caracter_before}{self.agrupation[1] if inside_parenthesis else ""}{self.simbol}{self.agrupation[1]}', 1
 
-    def get_automata_rule(self, automata_1:Automata) -> Automata:
+    def get_automata_rule(self, automata_1:Automata, state_counter:int) -> Automata:
         # New first state
-        new_initial_state = State(is_initial=True)
+        new_initial_state = State(is_initial=True, value=state_counter)
+        state_counter += 1
         # New final state
-        new_final_state = State(is_final=True)
+        new_final_state = State(is_final=True, value=state_counter)
         # New automata
         new_automata = Automata()
         # Change the initial state

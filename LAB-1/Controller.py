@@ -13,7 +13,7 @@ class Controller():
 		self.nfa.create_automata(postfix)
 		return self.nfa
 
-	def render_graph(self, file_name:str) -> None:
+	def render_graph(self, file_name:str or None = None) -> None:
 		self.nfa.create_graph(file_name)
 
 	

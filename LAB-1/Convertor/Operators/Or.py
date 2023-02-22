@@ -55,11 +55,12 @@ class Or(Operator):
 		if caracter_before:
 			return f'{caracter_before}{self.simbol}{agrupation_or}', positions_move, True
 
-	def get_automata_rule(self, operator1: Automata, operator2: Automata):
+	def get_automata_rule(self, operator1: Automata, operator2: Automata, state_counter: int):
 		# New first state
-		new_first_state = State(is_initial=True)
+		new_first_state = State(is_initial=True, value=state_counter)
+		state_counter += 1
 		# New last state
-		new_last_state = State(is_final=True)
+		new_last_state = State(is_final=True, value=state_counter)
 		# Remove the old first and last states
 		operator1.initial_state.is_initial = False
 		operator1.final_state.is_final = False

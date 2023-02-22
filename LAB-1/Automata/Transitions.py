@@ -10,6 +10,9 @@ class Transitions():
     def add_transition(self, state: State, token: Token, next_state: State) -> None:
         self.transitions.append([state, token, next_state])
 
+    def remove_transition(self, state: State, token: Token, next_state: State) -> None:
+        self.transitions.remove([state, token, next_state])
+
     def print_transitions(self) -> None:
         print('+---------- Transitions ----------+')
         for transition in self.transitions:

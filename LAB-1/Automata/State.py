@@ -10,8 +10,8 @@ class StateModel():
 
 
 class State():
-	def __init__(self, is_final=False, is_initial=False):
-		self.value = randint(0, 9999)  # TODO change to a ordered value
+	def __init__(self, is_final=False, is_initial=False, value:int = randint(0, 1000)) -> None:
+		self.value = value
 		self.is_final = is_final
 		self.is_initial = is_initial
 		self.transitions = {}  # ? Se manejaran las transiciones aqui? o mejor en el automata?

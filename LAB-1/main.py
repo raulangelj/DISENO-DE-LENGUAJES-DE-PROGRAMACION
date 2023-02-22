@@ -5,7 +5,7 @@
 from Controller import Controller
 from Menu.Menu import Menu
 from time import sleep
-# from Automata.NFA import NFA
+# from simple_term_menu import TerminalMenu
 
 
 def main():

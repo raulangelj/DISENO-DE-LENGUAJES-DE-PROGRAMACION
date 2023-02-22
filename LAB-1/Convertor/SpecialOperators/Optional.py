@@ -7,7 +7,7 @@ class Optional(Operator):
 		super().__init__()
 		self.simbol = OPTIONAL_SIMBOL
 		self.or_simbol = UNION_SIMBOL
-		self.priority = -1
+		self.priority = 3
 		self.or_op = Or()
 		self.errors = [
 			'Invalid expresion: optional can\'t be the first simbol or follow a Union/Or operator\n',

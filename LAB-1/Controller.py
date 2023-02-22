@@ -7,13 +7,14 @@ class Controller():
 		self.nfa: NFA = NFA()
 
 	def convert_infix_to_postfix(self, infix: str) -> str:
+		self.original_infix = infix
 		return self.parser.convert_from_infix_to_postfix(infix)
 
 	def create_automata(self, postfix: str) -> NFA:
-		self.nfa.create_automata(postfix)
+		self.nfa.create_automata(postfix, self.parser.infix, self.original_infix)
 		return self.nfa
 
-	def render_graph(self, file_name:str or None = None) -> None:
+	def render_graph(self, file_name:str='') -> None:
 		self.nfa.create_graph(file_name)
 
 	

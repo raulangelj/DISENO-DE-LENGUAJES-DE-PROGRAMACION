@@ -9,8 +9,12 @@ class NFA(Automata):
 		super().__init__()
 		self.simbols: Operators = Operators()
 		self.automata_stack: List[Automata] = []
+		self.infix: str = ''
+		self.original: str = ''
 
-	def create_automata(self, postfix:str) -> Automata:
+	def create_automata(self, postfix:str, infix:str='NFA', original:str = '') -> Automata:
+		self.infix = infix
+		self.original = original
 		for caracter in postfix:
 			if caracter == self.simbols.concat.get_simbol():
 				automata_concat = self.simbols.concat.get_automata_rule(self.automata_stack[-2], self.automata_stack[-1])
@@ -44,8 +48,10 @@ class NFA(Automata):
 		self.transitions = automata.transitions
 
 	def create_graph(self, fileName: str = 'NFA') -> None:
+		fileName = 'NFA' if not fileName or fileName is None else fileName
 		dot = gv.Digraph(comment='NFA Graph')
-		dot.attr(rankdir='LR')
+		dot.attr(rankdir='LR', label=f'NFA Graph: {self.original}')
+		dot.engine = 'dot'
 		# Nodes to graph
 		for state in self.states:
 			if state.is_final:

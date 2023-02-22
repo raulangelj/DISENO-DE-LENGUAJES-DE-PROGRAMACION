@@ -67,8 +67,8 @@ class NFA(Automata):
 			dot.edge(str(state_1.value), str(state_2.value), label=str(token.value))
 			dot.attr('node', shape='circle')
 		# doctest_mark_exe()
-		dot.render(f'LAB-1/NFA_GRPAH/{fileName}.gv').replace('\\', '/')
-		dot.render(f'LAB-1/NFA_GRPAH/{fileName}.gv', view=True)
+		dot.render(f'LAB-1/NFA_GRAPH/{fileName}.gv').replace('\\', '/')
+		dot.render(f'LAB-1/NFA_GRAPH/{fileName}.gv', view=True)
 		# s = Source(dot, filename='LAB-1/NFA/NFA_GRAPH.gv', format='png')
 		# s.view()
 

@@ -74,6 +74,9 @@ class Operators():
 		@return: expression validated (str)
 	'''
 	def evaluate_rules(self, expression, concat=True):
+		# sourcery skip: raise-specific-error
+		if expression is None or expression == '':
+			raise Exception('Expression is empty')
 		self.validate_agrupations(expression)
 		factors = []
 		final_exp = ''
@@ -117,8 +120,18 @@ class Operators():
 		@return: is_valid (bool)
 	'''
 	def validate_agrupations(self, expression):
-		# sourcery skip: raise-specific-error
-		c = Counter(expression)
-		if c[self.agrupation[0]] != c[self.agrupation[1]]:
-			raise Exception('Invalid agrupation')
+		open_agrupations = []
+		for index, caracter in enumerate(expression):
+			if self.is_left_agrupation(caracter):
+				open_agrupations.append((caracter, index))
+			elif self.is_right_agrupation(caracter):
+				if not open_agrupations:
+					raise Exception(
+						f'Invalid agrupation: missing open agrupation at position {str(index)}'
+					)
+				open_agrupations.pop()
+		if open_agrupations:
+			raise Exception(
+				f'Invalid agrupation: missing close agrupation for position {str(open_agrupations[0][1])}'
+			)
 		return True

@@ -38,6 +38,9 @@ class Concat(Operator):
 			# ['(aa)', ...]
 			elif len(factors[index]) > 1 and factors[index][0] == self.agrupation[0] and factors[index][-1] == self.agrupation[1]:
 				final_exp += f'{self.rules_concat(factors[index])}{self.add_simbol_last_factor(factors, index)}'
+			# ['(a),')', ...]
+			elif len(factors[index]) > 1 and factors[index][-1] == self.agrupation[1] and factors[index + 1 if index < len(factors) - 1 else index] == self.agrupation[1]:
+				final_exp += f'{self.rules_concat(factors[index])}{self.add_simbol_last_factor(factors, index)}'
 			# ['a']
 			elif index == len(factors) - 1:
 				final_exp += factors[index]

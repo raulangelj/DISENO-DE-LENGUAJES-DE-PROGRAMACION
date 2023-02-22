@@ -5,7 +5,7 @@ class Plus(Operator):
 	def __init__(self):
 		super().__init__()
 		self.simbol = PLUS_SIMBOL
-		self.priority = -1
+		self.priority = 3
 		self.errors = [
 			'Invalid expresion: plus can\'t be the first simbol or follow a Union/Or operator\n',
 		]

@@ -5,4 +5,4 @@ Repositorio para la clase DISEÑO DE LENGUAJES DE PROGRAMACION
 The repository URL can be found [HERE](https://github.com/raulangelj/DISENO-DE-LENGUAJES-DE-PROGRAMACION) just make sure to choose the branch of the exercise in question.
 
 ## LAB #1
-The coding files for the laboratory #1 can be found on the branch ```LAB-1``` or [HERE](https://github.com/raulangelj/DISENO-DE-LENGUAJES-DE-PROGRAMACION/tree/feat/LAB-1)
+The coding files for the laboratory #1 can be found on the branch ```LAB-1``` or [HERE](https://github.com/raulangelj/DISENO-DE-LENGUAJES-DE-PROGRAMACION/tree/feat/LAB-1). The resources for the prelab exercise can be found on the directory ```/LAB-1/PRELAB/``` o [HERE](https://github.com/raulangelj/DISENO-DE-LENGUAJES-DE-PROGRAMACION/tree/feat/LAB-1/LAB-1/PRELAB)

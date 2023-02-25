@@ -6,3 +6,19 @@ The repository URL can be found [HERE](https://github.com/raulangelj/DISENO-DE-L
 
 ## LAB #1
 The coding files for the laboratory #1 can be found on the branch ```LAB-1``` or [HERE](https://github.com/raulangelj/DISENO-DE-LENGUAJES-DE-PROGRAMACION/tree/feat/LAB-1). The resources for the prelab exercise can be found on the directory ```/LAB-1/PRELAB/``` o [HERE](https://github.com/raulangelj/DISENO-DE-LENGUAJES-DE-PROGRAMACION/tree/feat/LAB-1/LAB-1/PRELAB)
+
+## 🛠 Installation requirements
+
+(optional)
+
+1. Create the virtual enviroment ```python -m venv venv```
+2. Activate the virtual enviroment ```. venv/Scripts/activate```
+
+(install dependencies)
+
+3. pip install -r requirements.txt
+
+## Create .exe
+
+run ```pyinstaller --onefile <route>/<file_name>.py```
+This will create a build and dist rectory. The .exe file will be in the **dist** directory

@@ -21,5 +21,12 @@ class Optional(Operator):
 		elif caracter_before is self.agrupation[1]:
 			agrupation_optional, position_move = self.find_agrupation(factors)
 			return f'{self.agrupation[0]}{agrupation_optional}{self.or_simbol}{self.empty_simbol}{self.agrupation[1]}', position_move
+		# ['a|b', actual ...]
+		elif len(caracter_before) > 1 and caracter_before[-1] is not self.agrupation[1]:
+			letter = caracter_before[-1]
+			return f'{caracter_before[:-1]}{self.agrupation[0]}{letter}{self.or_simbol}{self.empty_simbol}{self.agrupation[1]}', 1
+		elif len(caracter_before) > 1:
+			agrupation_optional, position_move = self.find_agrupation("".join(factors))
+			return f'{caracter_before[:-position_move]}{self.agrupation[0]}{agrupation_optional}{self.or_simbol}{self.empty_simbol}{self.agrupation[1]}', position_move
 		else:
 			return f'{self.agrupation[0]}{caracter_before}{self.or_simbol}{self.empty_simbol}{self.agrupation[1]}', 1

@@ -32,7 +32,7 @@ class NFA(Automata):
 				self.automata_stack.append(self.create_token_automata(caracter, self.get_state_counter()))
 				self.state_counter += 1
 		self.set_automata(self.automata_stack[0])
-		# self.print_automata()
+		self.print_automata()
 		return self
 
 	def add_to_automata_stack(self, automata: Automata) -> None:

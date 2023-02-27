@@ -3,6 +3,7 @@ import graphviz as gv
 from graphviz import Source
 from Automata.Automata import Automata
 from Convertor.Simbols import Operators
+from Automata.State import State
 
 class NFA(Automata):
 	def __init__(self) -> None:
@@ -62,14 +63,5 @@ class NFA(Automata):
 				dot.node(str(state.value), str(state.value), shape='circle')
 		# Edges to graph
 		for state_1, token, state_2 in self.transitions.transitions:
-			if state_2.is_final:
-				dot.attr('node', shape='doublecircle')
 			dot.edge(str(state_1.value), str(state_2.value), label=str(token.value))
-			dot.attr('node', shape='circle')
-		# doctest_mark_exe()
-		dot.render(f'LAB-1/NFA_GRAPH/{fileName}.gv').replace('\\', '/')
-		dot.render(f'LAB-1/NFA_GRAPH/{fileName}.gv', view=True)
-		# s = Source(dot, filename='LAB-1/NFA/NFA_GRAPH.gv', format='png')
-		# s.view()
-
-
+		dot.render(f'LEXER/NFA_GRAPH/{fileName}.gv', view=True)

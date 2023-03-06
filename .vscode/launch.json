@@ -8,7 +8,7 @@
       "name": "Python: Run main",
       "type": "python",
       "request": "launch",
-      "program": "LAB-1/main.py",
+      "program": "LEXER/main.py",
       "console": "integratedTerminal",
       "justMyCode": true
     }

@@ -1,8 +1,10 @@
 from __future__ import annotations
 from typing import List
+import graphviz as gv
 from Automata.State import State
 from Automata.Token import Token
 from Automata.Transitions import Transitions
+from Automata.EmptyToken import EmptyToken
 
 class Automata():
 	def __init__(self) -> None:
@@ -12,6 +14,8 @@ class Automata():
 		self.alphabet: List[Token] = []
 		self.transitions: Transitions = Transitions()
 		self.state_counter: int = 0
+		self.infix: str = ''
+		self.original: str = ''
 
 	def create_token_automata(self, value: str, state_counter:int) -> Automata:
 		token_automata: Automata = Automata()
@@ -52,9 +56,42 @@ class Automata():
 			self.transitions.transitions.remove(element)
 		return transitions
 
+	def add_state(self, state: State) -> None:
+		if state not in self.states:
+			self.states.append(state)
+
 	def get_state_counter(self) -> int:
 		self.state_counter += 1
 		return self.state_counter
+	
+	
+	def set_automata(self, automata: Automata) -> None:
+		self.initial_state = automata.initial_state
+		self.final_state = automata.final_state
+		self.states = automata.states
+		# add all the alphabet except the empty token
+		for token in automata.alphabet:
+			if token.value != EmptyToken().value:
+				self.alphabet.append(token)
+		self.transitions = automata.transitions
+	
+	def create_graph(self, fileName: str = 'Automata', ) -> None:
+		fileName = 'Automata' if not fileName or fileName is None else fileName
+		dot = gv.Digraph(comment=f'{fileName} Graph')
+		dot.attr(rankdir='LR', label=f'{fileName} Graph: {self.original}')
+		dot.engine = 'dot'
+		# Nodes to graph
+		dot.node('initial', 'initial', shape='point')
+		for state in self.states:
+			if state.is_final:
+				dot.node(str(state.value), str(state.value), shape='doublecircle')
+			else:
+				dot.node(str(state.value), str(state.value), shape='circle')
+		# Edges to graph
+		dot.edge('initial', str(self.initial_state.value))
+		for state_1, token, state_2 in self.transitions.transitions:
+			dot.edge(str(state_1.value), str(state_2.value), label=str(token.value))
+		dot.render(f'LEXER/{fileName}_GRAPH/{fileName}.gv', view=True)
 	
 	def print_states(self) -> None:
 		print('+---------- States ----------+')

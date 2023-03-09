@@ -16,8 +16,11 @@ class Controller():
 		self.nfa.create_automata(postfix, self.parser.infix, self.original_infix)
 		return self.nfa
 
-	def render_graph(self, file_name:str='') -> None:
-		self.nfa.create_graph(file_name)
+	def render_graph(self, file_name:str='', dfa:bool = False) -> None:
+		if dfa:
+			self.dfa.create_graph(file_name)
+		else:
+			self.nfa.create_graph(file_name)
 
 	def get_dfa_subsets(self) -> None:
 		self.dfa = self.nfa.DFA_subsets()

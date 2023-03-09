@@ -27,5 +27,8 @@ class Controller():
 
 	def simulate_nfa(self, input_string: str) -> str:
 		return self.nfa.simulate(input_string)
+	
+	def simulate_dfa(self, input_string: str) -> str:
+		return self.dfa.simulate(input_string)
 
 	

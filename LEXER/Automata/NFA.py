@@ -53,19 +53,6 @@ class NFA(Automata):
 				):
 					e_closure.append(final_state)
 		return e_closure
-
-
-	def move(self, states: List[State], token_to_evaluate: Token) -> List[State]:
-		move = []
-		for state in states:
-			for initia_state, token, final_state in self.transitions.transitions:
-				if (
-					initia_state == state
-					and token.value == token_to_evaluate.value
-					and final_state not in move
-				):
-					move.append(final_state)
-		return move
 	
 	def simulate(self, input_string: str) -> str:
 		current_states = self.e_closure([self.initial_state])

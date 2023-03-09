@@ -92,6 +92,19 @@ class Automata():
 		for state_1, token, state_2 in self.transitions.transitions:
 			dot.edge(str(state_1.value), str(state_2.value), label=str(token.value))
 		dot.render(f'LEXER/{fileName}_GRAPH/{fileName}.gv', view=True)
+
+	
+	def move(self, states: List[State], token_to_evaluate: Token) -> List[State]:
+		move = []
+		for state in states:
+			for initia_state, token, final_state in self.transitions.transitions:
+				if (
+					initia_state == state
+					and token.value == token_to_evaluate.value
+					and final_state not in move
+				):
+					move.append(final_state)
+		return move
 	
 	def print_states(self) -> None:
 		print('+---------- States ----------+')

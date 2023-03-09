@@ -57,6 +57,10 @@ def main():
                             print('minimizar DFA')
                         elif option_afd == 2:
                             print('simulate DFA')
+                            input_string = input("Enter a string to simulate: ")
+                            print(f"You entered: {input_string}")
+                            result = controller.simulate_nfa(input_string)
+                            print(f"Result: {result}")
                         elif option_afd == 3:
                             print('Back')
                 if first_option == 2:

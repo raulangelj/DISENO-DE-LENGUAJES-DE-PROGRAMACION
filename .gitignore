@@ -1,5 +1,6 @@
 __pycache__/
 venv/
 NFA_GRAPH/
+DFA_GRAPH/
 build/
 dist/

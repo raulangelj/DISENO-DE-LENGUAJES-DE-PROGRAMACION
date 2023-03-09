@@ -14,7 +14,21 @@ class Menu():
             self.option, self.option_value = self.print_regex_menu()
         elif menu == 2:
             self.option, self.option_value = self.print_NFA_menu()
+        elif menu == 3:
+            self.option, self.option_value = self.print_adf_menu()
         return self.option, self.option_value
+    
+    def print_adf_menu(self):
+        title = 'Please choose action to do: '
+        options = ['Render DFA graph', 'Minimizar', 'Simulate DFA', 'Back']
+        return pick(
+            options,
+            title,
+            multiselect=False,
+            default_index=0,
+            min_selection_count=1,
+            indicator='->',
+        )
 
     def print_main_menu(self):
         title = 'Please choose action to do: '

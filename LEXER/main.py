@@ -33,10 +33,12 @@ def main():
                             _, second_option = menu.get_menu(2)
                             if second_option == 0:
                                 print("Render NFA graph")
-                                controller.render_graph()
+                                controller.render_graph(file_name='NFA')
                             elif second_option == 1:
                                 print("Convert NFA to DFA (subsets)")
                                 controller.get_dfa_subsets()
+                                second_option = 3
+                                first_option = 1
                             elif second_option == 2:
                                 print("Simulate NFA")
                                 input_string = input("Enter a string to simulate: ")
@@ -45,9 +47,19 @@ def main():
                                 print(f"Result: {result}")
                             elif second_option == 3:
                                 print("Back")                        
-                elif first_option == 1:
-                    print("Convert regex to DFA")
-                elif first_option == 2:
+                if first_option == 1:
+                    option_afd = 0
+                    while option_afd != 3:
+                        _, option_afd = menu.get_menu(3)
+                        if option_afd == 0:
+                            controller.render_graph(file_name='DFA', dfa=True)
+                        elif option_afd == 1:
+                            print('minimizar DFA')
+                        elif option_afd == 2:
+                            print('simulate DFA')
+                        elif option_afd == 3:
+                            print('Back')
+                if first_option == 2:
                     print("Back")
         elif option == 1:
             # print('===============\nRun tests\n===============\n')

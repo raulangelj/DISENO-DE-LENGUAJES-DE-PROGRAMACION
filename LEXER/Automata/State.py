@@ -35,3 +35,6 @@ class State():
 		print("|{:<20}|{:>10}|".format('Is_initial', self.is_initial))
 		print("|{:<20}|{:>10}|".format('Is_final', self.is_final))
 		print("+--------------------+----------+")
+
+	def __eq__(self, __o: object) -> bool:
+		return self.value == __o.value if isinstance(__o, State) else False

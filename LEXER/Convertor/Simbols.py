@@ -43,6 +43,12 @@ class Operators():
 	'''
 	def is_operator(self, operator):
 		return operator in self.operators
+	
+	def is_two_param_operator(self, operator):
+		return operator in [self.concat.get_simbol(), self.or_op.get_simbol()]
+	
+	def is_one_param_operator(self, operator):
+		return operator in [self.kleen.get_simbol(), self.optional.get_simbol(), self.plus.get_simbol()]
 
 	'''
 		if value is a left agrupation

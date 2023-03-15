@@ -45,7 +45,7 @@ class Menu():
     def print_regex_menu(self):
         title = 'Please choose action to do: '
         options = [
-            'Convert regex to NFA (Thompson)', 'Convert regex to DFA', 'Back']
+            'Convert regex to NFA (Thompson)', 'Convert regex to DFA (Direct)', 'Back']
         return pick(
             options,
             title,

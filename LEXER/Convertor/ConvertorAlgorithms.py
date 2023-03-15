@@ -28,6 +28,8 @@ class Algorithms():
 		@return: postfix expression (str)
 	'''
 	def shunting_yard(self, infix):
+		self.operators_stack = []
+		self.output_queue = []
 		# For each token in the infix string
 		for caracter in infix:
 			# If the token is not a operator or agrupation (language) then add it to the output queue

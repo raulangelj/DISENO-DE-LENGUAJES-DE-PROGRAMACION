@@ -38,4 +38,7 @@ class Parser():
         except Exception as e:
             print(colored(e, 'red'))
             return None
+        
+    def aumented_infix(self, infix):
+        return f'({infix})#'
     

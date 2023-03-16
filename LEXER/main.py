@@ -17,12 +17,14 @@ def main():
             expression = input("Enter a regular expression: ")
             print(f"You entered: {expression}")
             first_option = 0
+            controller = Controller()
+            postfix = controller.convert_infix_to_postfix(expression)          
             while first_option != 2:
-                _, first_option = menu.get_menu(1)                
+                _, first_option = menu.get_menu(1)      
                 if first_option == 0:
                     print("Convert regex to NFA (Thompson)")
-                    controller = Controller()
-                    postfix = controller.convert_infix_to_postfix(expression)
+                    if '#' in controller.original_infix:
+                        controller.convert_infix_to_postfix(expression, aumented=False)
                     if postfix is not None:
                         infix = controller.parser.infix
                         print(f"Infix: {infix}")
@@ -48,6 +50,10 @@ def main():
                             elif second_option == 3:
                                 print("Back")                        
                 if first_option == 1:
+                    print("Convert regex to DFA")
+                    if controller.dfa.is_empty():
+                        controller.convert_infix_to_postfix(expression, aumented=True)
+                        controller.create_adf_direct()
                     option_afd = 0
                     while option_afd != 3:
                         _, option_afd = menu.get_menu(3)
@@ -59,9 +65,10 @@ def main():
                             print('simulate DFA')
                             input_string = input("Enter a string to simulate: ")
                             print(f"You entered: {input_string}")
-                            result = controller.simulate_nfa(input_string)
+                            result = controller.simulate_dfa(input_string)
                             print(f"Result: {result}")
                         elif option_afd == 3:
+                            controller.reset_adf()
                             print('Back')
                 if first_option == 2:
                     print("Back")

@@ -8,14 +8,17 @@ from Automata.EmptyToken import EmptyToken
 
 class Automata():
 	def __init__(self) -> None:
-		self.initial_state: State
-		self.final_state: State
+		self.initial_state: State = None
+		self.final_state: State = None
 		self.states: List[State] = []
 		self.alphabet: List[Token] = []
 		self.transitions: Transitions = Transitions()
 		self.state_counter: int = 0
 		self.infix: str = ''
 		self.original: str = ''
+	
+	def is_empty(self) -> bool:
+		return self.initial_state is None and self.final_state is None
 
 	def create_token_automata(self, value: str, state_counter:int) -> Automata:
 		token_automata: Automata = Automata()
@@ -57,7 +60,8 @@ class Automata():
 		return transitions
 
 	def add_state(self, state: State) -> None:
-		if state not in self.states:
+		is_in = any(state_item.value == state.value for state_item in self.states)
+		if not is_in:
 			self.states.append(state)
 
 	def get_state_counter(self) -> int:

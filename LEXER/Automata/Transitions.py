@@ -18,8 +18,8 @@ class Transitions():
             (
                 transition[2]
                 for transition in self.transitions
-                if transition[0] == initial
-                and transition[1] == token
+                if transition[0].value == initial.value
+                and transition[1].value == token.value
             ),
             [],
         )

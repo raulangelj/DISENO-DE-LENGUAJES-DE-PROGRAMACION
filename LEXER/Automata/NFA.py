@@ -78,9 +78,10 @@ class NFA(Automata):
 		for state in Dstates:
 			for simbol in self.alphabet:
 				U = self.e_closure(self.move(state, simbol))
-				if U not in Dstates:
+				if U not in Dstates and U != []:
 					Dstates.append(U)
-				Dtran.append([Dstates.index(state), simbol, Dstates.index(U)])
+				if U != []:
+					Dtran.append([Dstates.index(state), simbol, Dstates.index(U)])
 		# set the transitions and create the states
 		for initial_state, token, final_state in Dtran:
 			initial_state = self.generate_state_from_Dstates(Dstates, initial_state, dfa)

@@ -61,6 +61,7 @@ def main():
                             controller.render_graph(file_name='DFA', dfa=True)
                         elif option_afd == 1:
                             print('minimizar DFA')
+                            controller.minimize_dfa()
                         elif option_afd == 2:
                             print('simulate DFA')
                             input_string = input("Enter a string to simulate: ")

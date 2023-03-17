@@ -1,4 +1,5 @@
-from typing import TypedDict
+from __future__ import annotations
+from typing import List
 from random import randint
 
 
@@ -23,6 +24,11 @@ class State():
 			'is_initial': self.is_initial,
 			'transitions': self.transitions
 		}
+	
+	def is_in(self, array_to_evaluate: List[State]) -> bool:
+		for state in array_to_evaluate:
+			if self.value == state.value:
+				return True
 
 	def __str__(self) -> str:
 		return f'value: {self.value}, is_final: {self.is_final}, is_initial: {self.is_initial}, transitions: {self.transitions}'

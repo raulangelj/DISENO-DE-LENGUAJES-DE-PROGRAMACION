@@ -51,4 +51,7 @@ class Controller():
 		tree.create_tree()
 		self.tree = tree
 
+	def minimize_dfa(self) -> None:
+		self.dfa.minimizing()
+
 	

@@ -32,7 +32,7 @@ class DFA(Automata):
                 for p in state:
                     if tree.leaves[p].value == simbol:
                         next_s.extend(tree.followpos[p])
-                if next_s:
+                if next_s := list(set(next_s)):
                     if next_s not in Dstates:
                         Dstates.append(next_s)
                     Dtran.append((Dstates.index(state), simbol, Dstates.index(next_s)))
@@ -78,8 +78,9 @@ class DFA(Automata):
             next_state1 = self.transitions.get_transition(state1, token)
             next_state2 = self.transitions.get_transition(state2, token)
             for group in P:
-                if (next_state1.is_in(group) and not next_state2.is_in(group)) or (next_state2.is_in(group) and not next_state1.is_in(group)):
-                    return True
+                if next_state1 != [] and next_state2 != []:
+                    if (next_state1.is_in(group) and not next_state2.is_in(group)) or (next_state2.is_in(group) and not next_state1.is_in(group)):
+                        return True
         return False
 
     
@@ -159,9 +160,10 @@ class DFA(Automata):
             for token in self.alphabet:
                 next_state = self.transitions.get_transition(self.get_state(int(state.value)), token)
                 for group in P_new:
-                    if next_state.is_in(group):
-                        new_next_state = new_automata.get_state(int(group[0].value))
-                        new_automata.transitions.add_transition(state, token, new_next_state)
+                    if next_state != []:
+                        if next_state.is_in(group):
+                            new_next_state = new_automata.get_state(int(group[0].value))
+                            new_automata.transitions.add_transition(state, token, new_next_state)
         # Set the alphabet
         new_automata.alphabet = self.alphabet
         # Set the initial state

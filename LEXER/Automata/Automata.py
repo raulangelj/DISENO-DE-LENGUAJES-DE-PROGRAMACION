@@ -16,6 +16,9 @@ class Automata():
 		self.state_counter: int = 0
 		self.infix: str = ''
 		self.original: str = ''
+
+	def get_state(self, value: int) -> State:
+		return next((state for state in self.states if state.value == value), None)
 	
 	def is_empty(self) -> bool:
 		return self.initial_state is None and self.final_state is None

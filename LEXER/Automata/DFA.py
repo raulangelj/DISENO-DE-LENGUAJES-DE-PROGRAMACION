@@ -77,6 +77,8 @@ class DFA(Automata):
             # see if the next position of both states is in the same group
             next_state1 = self.transitions.get_transition(state1, token)
             next_state2 = self.transitions.get_transition(state2, token)
+            if (next_state1 == [] and next_state2 != []) or (next_state1 != [] and next_state2 == []):
+                return True
             for group in P:
                 if next_state1 != [] and next_state2 != []:
                     if (next_state1.is_in(group) and not next_state2.is_in(group)) or (next_state2.is_in(group) and not next_state1.is_in(group)):
@@ -118,9 +120,11 @@ class DFA(Automata):
                 #     separable[values_pair] = is_in
                 print(separable)
                 # Separo los grupos acorde a si son distingibles o no
+                sort_orders = sorted(separable.items(), key=lambda x: x[1])
                 local_groups = []
                 already_added = []
-                for pair, value in separable.items():
+                for item in sort_orders:
+                    pair, value = item
                     if value:
                         for state_value in pair:
                             if state_value not in already_added:

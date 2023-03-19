@@ -40,5 +40,5 @@ class Parser():
             return None
         
     def aumented_infix(self, infix):
-        return f'({infix})#'
+        return f'{infix}#'
     

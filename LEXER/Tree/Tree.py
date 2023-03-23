@@ -2,6 +2,7 @@
 from Tree.Node import Node
 from Convertor.Parser import Parser
 from typing import Dict
+import graphviz as gv
 
 class Tree():
     def __init__(self, postfix: str):
@@ -13,6 +14,8 @@ class Tree():
         self.language = []
         self.leaves: Dict[int, Node] = {}
         self.last_counter = -1
+        self.dot = gv.Digraph(comment=f'{self.postfix} Tree')
+        self.dot.attr(label=f'{self.postfix} Tree')
 
     def create_tree(self) -> None:
         stack = []
@@ -39,6 +42,7 @@ class Tree():
                     self.last_counter = self.i_counter
                 self.i_counter += 1
         self.tree = stack.pop()
+        print(self.tree.value)
         # self.inorder(self.tree)
 
     def inorder(self, x):
@@ -54,6 +58,20 @@ class Tree():
         self.postorder(x.left)
         self.postorder(x.right)
         print(x.value, end=" ")
+
+    def render_tree(self, x):
+        if x.left:
+            self.dot.node(x.left.uuid, x.left.value)
+            self.dot.edge(x.uuid, x.left.uuid)
+            self.render_tree(x.left)
+        if x.right:
+            self.dot.node(x.right.uuid, x.right.value)
+            self.dot.edge(x.uuid, x.right.uuid)
+            self.render_tree(x.right)
+        if x.uuid == self.tree.uuid:
+            self.dot.node(x.uuid, x.value)
+            self.dot.render('LEXER/output/tree.gv', view=True)
+        
     
     def followpos_recursive(self, x: Node):
         if not x:

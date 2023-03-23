@@ -1,5 +1,6 @@
 from Automata.Token import Token
 from Convertor.Operators.Operator import Operator
+from uuid import uuid4
 
 
 class Node():
@@ -9,6 +10,7 @@ class Node():
         self.right = right
         self.operator = Operator()
         self.i = i
+        self.uuid = str(uuid4())
     
     def nullable(self) -> bool:
         if self.value == self.operator.empty_simbol:

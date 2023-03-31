@@ -31,7 +31,7 @@ class Yalex():
                         self.variable_declaration(line[4:]) # 4 because we already read the 'let ' word
                         word = ''
                         break
-        return self.rule
+        return self.operators.concat.validate(self.rule)
     
     def rule_declaration(self, line: str) -> None:
         keep_reading = True

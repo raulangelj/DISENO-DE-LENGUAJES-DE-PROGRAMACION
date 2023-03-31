@@ -20,33 +20,60 @@ class Concat(Operator):
 	'''
 	def validate(self, factors, index=0):
 		final_exp = ''
-		for index in range(len(factors)):
-			is_open_agrupation = factors[index] == self.agrupation[0]
-			is_not_two_agrupation_together = (
-				factors[index] not in self.agrupation and factors[index + 1 if index < len(factors) - 1 else index] is self.agrupation[1])
-			is_last_factor = index == len(factors) - 1
-			has_more_than_one_factor = len(factors) > 1
-			# ['(', ...], ['a', ')'], ['a']
-			if (is_open_agrupation or is_not_two_agrupation_together or is_last_factor) and has_more_than_one_factor and factors[index][-1] is not self.agrupation[1]:
+		keep_reading = True
+		index = 0
+		while keep_reading:
+			if index >= len(factors):
+				keep_reading = False
+			# | not concat
+			elif factors[index] == self.union_simbol:
 				final_exp += factors[index]
-			# [')', ...]
-			elif factors[index] == self.agrupation[1] and factors[index + 1 if index < len(factors) - 1 else index] in self.simbols:
+				index += 1
+			# * concat if is not the last factor and the next factor is not a simbol or is not a agrupation close
+			elif factors[index] == self.kleene_simbol:
 				final_exp += factors[index]
-			# ['a|', ...]
-			elif len(factors[index]) > 1 and factors[index][-1] == UNION_SIMBOL:
+				if index < len(factors) - 1:
+					next_factor = factors[index + 1]
+					if next_factor not in self.simbols and next_factor != self.agrupation[1]:
+						final_exp += self.simbol
+				index += 1
+			# ? concat if is not the last factor and the next factor is not a simbol or is not a agrupation close
+			elif factors[index] == self.optional_simbol:
 				final_exp += factors[index]
-			# ['(aa)', ...]
-			elif len(factors[index]) > 1 and factors[index][0] == self.agrupation[0] and factors[index][-1] == self.agrupation[1]:
-				final_exp += f'{self.rules_concat(factors[index])}{self.add_simbol_last_factor(factors, index)}'
-			# ['(a),')', ...]
-			elif len(factors[index]) > 1 and factors[index][-1] == self.agrupation[1] and factors[index + 1 if index < len(factors) - 1 else index] == self.agrupation[1]:
-				final_exp += f'{self.rules_concat(factors[index])}{self.add_simbol_last_factor(factors, index)}'
-			# ['a']
-			elif index == len(factors) - 1:
+				if index < len(factors) - 1:
+					next_factor = factors[index + 1]
+					if next_factor not in self.simbols and next_factor != self.agrupation[1]:
+						final_exp += self.simbol
+				index += 1
+			# + concat if is not the last factor and the next factor is not a simbol or is not a agrupation close
+			elif factors[index] == self.plus_simbol:
 				final_exp += factors[index]
-			else:
-				final_exp += f'{factors[index]}{self.simbol}'
-		return final_exp, 0
+				if index < len(factors) - 1:
+					next_factor = factors[index + 1]
+					if next_factor not in self.simbols and next_factor != self.agrupation[1]:
+						final_exp += self.simbol
+				index += 1
+			# ( not concat
+			elif factors[index] == self.agrupation[0]:
+				final_exp += factors[index]
+				index += 1
+			# ) concat if is not the last factor and the next factor is not a simbol or is not a agrupation close
+			elif factors[index] == self.agrupation[1]:
+				final_exp += factors[index]
+				if index < len(factors) - 1:
+					next_factor = factors[index + 1]
+					if next_factor not in self.simbols and next_factor != self.agrupation[1]:
+						final_exp += self.simbol
+				index += 1
+			# between two letters concat
+			elif not self.is_simbol(factors[index]):
+				final_exp += factors[index]
+				if index < len(factors) - 1:
+					next_factor = factors[index + 1]
+					if not self.is_simbol(next_factor):
+						final_exp += self.simbol
+				index += 1
+		return final_exp
 
 	def rules_concat(self, agrupation):
 		expresion_concat = ''

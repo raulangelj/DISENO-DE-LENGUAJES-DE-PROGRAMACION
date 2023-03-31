@@ -25,6 +25,12 @@ class Concat(Operator):
 		while keep_reading:
 			if index >= len(factors):
 				keep_reading = False
+			# \\ not concat
+			elif factors[index] == '\\':
+				final_exp += factors[index]
+				index += 1
+				# final_exp += factors[index]
+				# index += 1
 			# | not concat
 			elif factors[index] == self.union_simbol:
 				final_exp += factors[index]

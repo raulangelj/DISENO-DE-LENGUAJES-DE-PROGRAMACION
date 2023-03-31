@@ -9,6 +9,7 @@ class Yalex():
         self.variables = {}
         self.operators = Operators()
         self.rule = ''
+        self.expression = ''
 
     def read_file(self) -> None:
         reading_rule = False
@@ -31,7 +32,8 @@ class Yalex():
                         self.variable_declaration(line[4:]) # 4 because we already read the 'let ' word
                         word = ''
                         break
-        return self.operators.concat.validate(self.rule)
+        self.expression = self.operators.concat.validate(self.rule)
+        return self.expression
     
     def rule_declaration(self, line: str) -> None:
         keep_reading = True

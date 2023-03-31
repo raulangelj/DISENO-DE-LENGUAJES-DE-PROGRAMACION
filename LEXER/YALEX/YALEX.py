@@ -8,18 +8,82 @@ class Yalex():
         self.file_to_read = file_to_read
         self.variables = {}
         self.operators = Operators()
+        self.rule = ''
 
     def read_file(self) -> None:
+        reading_rule = False
+        rule_text = ''
         with open(self.file_to_read, 'r') as file:
+            # TODO: quitar breaks y hacerlo con index y las funciones me van a regresar cuantos me movi
             for line in file:
                 word = ''
                 for char in line:
                     word += char
-                    if word == 'let ':
+                    if word == 'rule ' or reading_rule:
+                        rule_text += char
+                        reading_rule = True
+                        if rule_text[-1] == LINE_CLOSING and rule_text[-2] == LINE_CLOSING:
+                            reading_rule = False
+                            self.rule_declaration(rule_text[1:])
+                            rule_text = ''
+                            break
+                    elif word == 'let ':
                         self.variable_declaration(line[4:]) # 4 because we already read the 'let ' word
                         word = ''
                         break
-        return self.variables
+        return self.rule
+    
+    def rule_declaration(self, line: str) -> None:
+        keep_reading = True
+        # index_to_read = 5 # 5 because we already read the 'rule ' word
+        index_to_read = 0
+        # find the rule name
+        rule_name = ''
+        var_name = ''
+        while keep_reading:
+            if line[index_to_read] == ' ':
+                keep_reading = False
+            else:
+                rule_name += line[index_to_read]
+                index_to_read += 1
+        # find the rule value
+        keep_reading = True
+        index_to_read += 2 # 2 because we already read the '= ' word
+        rule_value = {}
+        rule_returns = {}
+        reading_return = False
+        while keep_reading:
+            if index_to_read >= len(line):
+                keep_reading = False
+            elif line[index_to_read] == '}':
+                reading_return = False
+            elif line[index_to_read] == '{' or reading_return:
+                reading_return = True
+            elif (
+                line[index_to_read] is not LINE_CLOSING
+                and line[index_to_read] != ' '
+                and not self.operators.is_operator(line[index_to_read])
+                and line[index_to_read] != "'"
+            ):
+                var_name += line[index_to_read]
+            elif line[index_to_read] == "'":
+                string, move = self.expect_single_quote(line[index_to_read:])
+                var_name += string
+                index_to_read += move
+                rule_value[var_name] = var_name
+                rule_returns[var_name] = var_name # arreglar para que lea loq ue viene
+                var_name = ''
+            elif var_name != ' ' and var_name in self.variables:
+                rule_value[var_name] = self.variables[var_name]
+                rule_returns[var_name] = var_name # arreglar para que lea loq ue viene
+                var_name = ''
+            index_to_read += 1
+        rule_value_string = '('
+        for value in rule_value.values():
+            rule_value_string += f'({value})|'
+        rule_value_string = f'{rule_value_string[:-1]})'
+        self.rule = rule_value_string
+
 
     def variable_declaration(self, line: str) -> None:
         keep_reading = True

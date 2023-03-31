@@ -24,7 +24,9 @@ class Operators():
 		self.operators = {
 			self.kleen.get_simbol(): self.kleen.get_priority(),
 			self.concat.get_simbol(): self.concat.get_priority(),
-			self.or_op.get_simbol(): self.or_op.get_priority()
+			self.or_op.get_simbol(): self.or_op.get_priority(),
+			self.optional.get_simbol(): self.optional.get_priority(),
+			self.plus.get_simbol(): self.plus.get_priority()
 		}
 		self.agrupation = self.kleen.get_agrupation_simbols()
 

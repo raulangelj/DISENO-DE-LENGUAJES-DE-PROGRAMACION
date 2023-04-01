@@ -2,6 +2,8 @@ from typing import List
 from Convertor.Simbols import Operators
 
 LINE_CLOSING = '\n'
+OPEN_COMMENT = '(*'
+CLOSE_COMMENT = '*)'
 
 
 class Yalex():
@@ -11,6 +13,7 @@ class Yalex():
         self.operators = Operators()
         self.rule = ''
         self.expression = ''
+        self.comments = []
 
     def read_file(self) -> None:
         filex_text = ''
@@ -36,13 +39,25 @@ class Yalex():
         word = ''
         index = 0
         reading_rule = False
-        rule_text = ''
+        actual_comment = ''
+        reading_comment = False
         while keep_reading:
             if index > len(filex_text) - 1:
                 keep_reading = False
             elif filex_text[index] != LINE_CLOSING:
+                char = filex_text[index]
                 word += filex_text[index]
-                if word == 'rule ' or reading_rule:
+                if char == CLOSE_COMMENT[0] and filex_text[index + 1] == CLOSE_COMMENT[1]:
+                    actual_comment += char + filex_text[index + 1]
+                    index += 1
+                    self.comments.append(actual_comment)
+                    reading_comment = False
+                    actual_comment = ''
+                    word = ''
+                elif (char == OPEN_COMMENT[0] and filex_text[index + 1] == OPEN_COMMENT[1]) or reading_comment:
+                    reading_comment = True
+                    actual_comment += char
+                elif word == 'rule ' or reading_rule:
                     index += 1 # add 1 because we already read the ' ' word
                     move = self.rule_declaration(filex_text[index:])
                     index += move
@@ -84,9 +99,20 @@ class Yalex():
         rule_value = {}
         rule_returns = {}
         reading_return = False
+        reading_comment = False
+        actual_comment = ''
         while keep_reading:
             if index_to_read >= len(line):
                 keep_reading = False
+            elif line[index_to_read] == CLOSE_COMMENT[0] and line[index_to_read + 1] == CLOSE_COMMENT[1]:
+                actual_comment += line[index_to_read] + line[index_to_read + 1]
+                index_to_read += 1
+                self.comments.append(actual_comment)
+                reading_comment = False
+                actual_comment = ''
+            elif (line[index_to_read] == OPEN_COMMENT[0] and line[index_to_read + 1] == OPEN_COMMENT[1]) or reading_comment:
+                reading_comment = True
+                actual_comment += line[index_to_read]
             elif line[index_to_read] == '}':
                 reading_return = False
             elif line[index_to_read] == '{' or reading_return:

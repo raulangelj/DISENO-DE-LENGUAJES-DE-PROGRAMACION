@@ -211,14 +211,17 @@ class Yalex():
     def expect_range(self, line:str, start_range: str) -> str:
         range_var = []
         end_range, move = self.expect_single_quote(line[1:])
-        range_var.extend(chr(i) for i in range(ord(start_range), ord(end_range) + 1))
+        range_var.extend(str(i).zfill(3) for i in range(int(start_range), int(end_range) + 1))
         return range_var, 1 + move
 
     def expect_single_quote(self, line:str) -> str:
+        ascii_char = str(ord(line[1])).zfill(3)
         regular_char = line[1]
         if regular_char == '\\':
             regular_char += line[2]
-        return regular_char, len(regular_char) + 1
+            ascii_char += str(ord(line[2])).zfill(3)
+        # ascii_char = str(ord(regular_char[0])).zfill(3) + str(ord(regular_char[1])).zfill(3)
+        return ascii_char, len(regular_char) + 1
         # keep_reading = True
         # index_to_read = 1
         # regular_char = ''
@@ -238,6 +241,7 @@ class Yalex():
         index_to_read = 1
         # string_character = ''
         string_character = []
+        ascii_char = []
         while keep_reading:
             if line[index_to_read] == '"':
                 keep_reading = False
@@ -246,5 +250,6 @@ class Yalex():
                 # string_character += char
                 # index_to_read += move
                 string_character.append(line[index_to_read])
+                ascii_char.append(str(ord(line[index_to_read])).zfill(3))
                 index_to_read += 1
         return string_character, index_to_read

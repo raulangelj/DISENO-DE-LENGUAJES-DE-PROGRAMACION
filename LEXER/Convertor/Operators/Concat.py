@@ -25,7 +25,7 @@ class Concat(Operator):
 		while keep_reading:
 			if index >= len(factors):
 				keep_reading = False
-			# \\ not concat
+			# \\ not concat TODO: this can be removed now there are numbers
 			elif factors[index] == '\\':
 				final_exp += factors[index]
 				index += 1
@@ -74,11 +74,14 @@ class Concat(Operator):
 			# between two letters concat
 			elif not self.is_simbol(factors[index]):
 				final_exp += factors[index]
+				final_exp += factors[index + 1]
+				final_exp += factors[index + 2]
+				index += 3
 				if index < len(factors) - 1:
-					next_factor = factors[index + 1]
-					if not self.is_simbol(next_factor):
+					next_factor = factors[index]
+					if not self.is_simbol(next_factor) and factors[index - 3:index] != str(ord('\\')).zfill(3):
 						final_exp += self.simbol
-				index += 1
+				# index += 1
 		return final_exp
 
 	def rules_concat(self, agrupation):

@@ -19,28 +19,41 @@ class Tree():
 
     def create_tree(self) -> None:
         stack = []
+        keep_reading = True
+        index = 0
         if not self.postfix:
             return
-        for caracter in self.postfix:
-            if self.parser.operators.is_two_param_operator(caracter):
-                z = Node(caracter)
+        while keep_reading:
+        # for caracter in self.postfix:
+        # for index in range(len(self.postfix)):
+            # caracter = self.postfix[index]
+            if index > len(self.postfix) - 1:
+                keep_reading = False
+            elif self.parser.operators.is_two_param_operator(self.postfix[index]):
+                z = Node(self.postfix[index])
                 right = stack.pop()
                 left = stack.pop()
                 z.left = left
                 z.right = right
                 stack.append(z)
-            elif self.parser.operators.is_one_param_operator(caracter):
-                z = Node(caracter)
+            elif self.parser.operators.is_one_param_operator(self.postfix[index]):
+                z = Node(self.postfix[index])
                 left = stack.pop()
                 z.left = left
                 stack.append(z)
             else:
-                stack.append(Node(value=caracter, i=self.i_counter))
-                if caracter not in self.language and caracter != self.parser.operators.optional.empty_simbol and caracter != '#':
-                    self.language.append(caracter)
-                if caracter == '#':
+                char_value = self.postfix[index] + self.postfix[index + 1] + self.postfix[index + 2]
+                if char_value == '092':
+                    char_value += self.postfix[index + 3] + self.postfix[index + 4] + self.postfix[index + 5]
+                    index += 3
+                stack.append(Node(value=char_value, i=self.i_counter))
+                if char_value not in self.language and char_value != self.parser.operators.optional.empty_simbol and char_value != '#':
+                    self.language.append(char_value)
+                if char_value == '#':
                     self.last_counter = self.i_counter
                 self.i_counter += 1
+                index += 2
+            index += 1
         self.tree = stack.pop()
         print(self.tree.value)
         # self.inorder(self.tree)

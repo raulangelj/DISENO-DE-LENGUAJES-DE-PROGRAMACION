@@ -55,14 +55,14 @@ class Tree():
                 index += 2
             index += 1
         self.tree = stack.pop()
-        print(self.tree.value)
+        # print(self.tree.value)
         # self.inorder(self.tree)
 
     def inorder(self, x):
         if not x:
             return
         self.inorder(x.left)
-        print(x.value, end=" ")
+        # print(x.value, end=" ")
         self.inorder(x.right)
 
     def postorder(self, x):
@@ -70,7 +70,7 @@ class Tree():
             return
         self.postorder(x.left)
         self.postorder(x.right)
-        print(x.value, end=" ")
+        # print(x.value, end=" ")
 
     def render_tree(self, x):
         if x.left:

@@ -147,6 +147,9 @@ class Yalex():
                 # arreglar para que lea loq ue viene
                 rule_returns[var_name] = var_name
                 var_name = ''
+            # llego al or y no encontro la variable
+            elif var_name != '' and line[index_to_read] == self.operators.or_op.simbol:
+                raise Exception(f'Variable "{var_name}" not found')
             index_to_read += 1
         rule_value_string = '('
         for value in rule_value.values():
@@ -221,7 +224,10 @@ class Yalex():
 
 
     def return_variable(self, variable_name: str) -> str:
-        return self.variables[variable_name]
+        if variable_name in self.variables:
+            return self.variables[variable_name]
+        else:
+            raise Exception(f'Variable "{variable_name}" not found')
 
     def expect_yalex_var(self, line: str) -> str:
         keep_reading = True

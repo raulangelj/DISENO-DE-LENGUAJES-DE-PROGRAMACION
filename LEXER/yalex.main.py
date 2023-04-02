@@ -1,14 +1,15 @@
 from YALEX.YALEX import Yalex
+from termcolor import colored
 from Convertor.ConvertorAlgorithms import Algorithms
 from Tree.Tree import Tree
 
 
 def main():
     # yalex = Yalex('LEXER/Mocks/YALEX/slr-test.yal')
-    # yalex = Yalex('LEXER/Mocks/YALEX/slr-1.yal')
+    yalex = Yalex('LEXER/Mocks/YALEX/slr-1.yal')
     # yalex = Yalex('LEXER/Mocks/YALEX/slr-2.yal')
     # yalex = Yalex('LEXER/Mocks/YALEX/slr-3.yal')
-    yalex = Yalex('LEXER/Mocks/YALEX/slr-4.yal')
+    # yalex = Yalex('LEXER/Mocks/YALEX/slr-4.yal')
     algorithms = Algorithms()
     # print(yalex.expect_single_quote("'\n'"))
     # print(yalex.expect_single_quote("'a'"))
@@ -20,13 +21,16 @@ def main():
     # print(yalex.expect_yalex_var("['a'-'z']"))
     # print(yalex.expect_yalex_var("['A'-'Z''a'-'z']"))
     # print(yalex.varaible_declaration("let letter = ['A'-'Z''a'-'z']"))
-    yalex.read_file()
-    postfix = algorithms.get_result_postfix(yalex.expression)
-    # print('postfix')
-    # print(postfix)
-    tree = Tree(postfix=postfix)
-    tree.create_tree()
-    tree.render_tree(tree.tree)
+    try:
+        yalex.read_file()
+        postfix = algorithms.get_result_postfix(yalex.expression)
+        # print('postfix')
+        # print(postfix)
+        tree = Tree(postfix=postfix)
+        tree.create_tree()
+        tree.render_tree(tree.tree)
+    except Exception as e:
+        print(colored(e, 'red'))
     # print('termino')
 
 

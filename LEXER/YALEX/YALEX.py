@@ -122,10 +122,20 @@ class Yalex():
                 and line[index_to_read] != ' '
                 and not self.operators.is_operator(line[index_to_read])
                 and line[index_to_read] != "'"
+                and line[index_to_read] != '"'
             ):
                 var_name += line[index_to_read]
             elif line[index_to_read] == "'":
                 string, move = self.expect_single_quote(line[index_to_read:])
+                var_name += string
+                index_to_read += move
+                rule_value[var_name] = var_name
+                # arreglar para que lea loq ue viene
+                rule_returns[var_name] = var_name
+                var_name = ''
+            elif line[index_to_read] == '"':
+                string, move = self.expect_double_quote(line[index_to_read:])
+                string = "".join(string)
                 var_name += string
                 index_to_read += move
                 rule_value[var_name] = var_name
@@ -163,6 +173,7 @@ class Yalex():
             line[index_to_read:])
         index_to_read += move
         self.variables[variable_name] = self.convert_to_expression(
+            # yalex_var) if convert else f'({"".join(yalex_var)})'
             yalex_var) if convert else "".join(yalex_var)
         return index_to_read
         # keep_reading = True
@@ -190,13 +201,24 @@ class Yalex():
         # final_value += ')'
         # return final_value
 
+        # result = ''
+        # for i in range(len(variable)):
+        #     if variable[i] == '(' or variable[i] == ')' or i == len(variable) - 2:
+        #         result += variable[i]
+        #     else:
+        #         result += variable[i] + '|'
+        # return result
+
         result = ''
         for i in range(len(variable)):
-            if variable[i] == '(' or variable[i] == ')' or i == len(variable) - 2:
+            if self.operators.concat.is_simbol(variable[i]):
                 result += variable[i]
+            elif not self.operators.concat.is_simbol(variable[i]) and not self.operators.concat.is_simbol(variable[i + 1]):
+                result += f'{variable[i]}|'
             else:
-                result += variable[i] + '|'
+                result += variable[i]
         return result
+
 
     def return_variable(self, variable_name: str) -> str:
         return self.variables[variable_name]
@@ -311,10 +333,10 @@ class Yalex():
             if line[index_to_read] == '"':
                 keep_reading = False
             else:
-                # char, move = self.expect_single_quote(f"'{line[index_to_read:]}")
-                # string_character += char
-                # index_to_read += move
-                string_character.append(line[index_to_read])
-                ascii_char.append(str(ord(line[index_to_read])).zfill(3))
-                index_to_read += 1
+                char, move = self.expect_single_quote(f"'{line[index_to_read:]}")
+                string_character += [char]
+                index_to_read += move - 1
+                # string_character.append(line[index_to_read])
+                # ascii_char.append(str(ord(line[index_to_read])).zfill(3))
+                # index_to_read += 1
         return string_character, index_to_read

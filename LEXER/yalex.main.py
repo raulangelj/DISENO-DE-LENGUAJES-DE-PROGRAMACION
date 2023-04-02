@@ -29,11 +29,11 @@ def main():
         else:
             print('Ingrese una opción válida')
 
-    # yalex = Yalex('LEXER/Mocks/YALEX/slr-test.yal')
     # yalex = Yalex('LEXER/Mocks/YALEX/slr-1.yal')
     # yalex = Yalex('LEXER/Mocks/YALEX/slr-2.yal')
     # yalex = Yalex('LEXER/Mocks/YALEX/slr-3.yal')
     # yalex = Yalex('LEXER/Mocks/YALEX/slr-4.yal')
+    # yalex = Yalex('LEXER/Mocks/YALEX/slr-test.yal')
     # algorithms = Algorithms()
     # print(yalex.expect_single_quote("'\n'"))
     # print(yalex.expect_single_quote("'a'"))

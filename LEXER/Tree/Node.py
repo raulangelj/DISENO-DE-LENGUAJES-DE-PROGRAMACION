@@ -11,6 +11,13 @@ class Node():
         self.operator = Operator()
         self.i = i
         self.uuid = str(uuid4())
+        # show the str instead of the ascii
+        # if len(value) == 3:
+        #     self.value = chr(int(value))
+        # elif len(value) == 6:
+        #     self.value = chr(int(value[:3])) + chr(int(value[3:]))
+        # else:
+        #     self.value = value
     
     def nullable(self) -> bool:
         if self.value == self.operator.empty_simbol:

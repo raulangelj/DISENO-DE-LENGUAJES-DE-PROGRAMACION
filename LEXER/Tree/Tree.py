@@ -13,7 +13,7 @@ class Tree():
         self.followpos = {}
         self.language = []
         self.leaves: Dict[int, Node] = {}
-        self.last_counter = -1
+        self.final_states = []
         self.dot = gv.Digraph(comment=f'{self.get_postfix()} Tree')
         self.dot.attr(label=f'{self.get_postfix()} Tree')
 
@@ -40,7 +40,7 @@ class Tree():
                 if caracter not in self.language and caracter != self.parser.operators.optional.empty_simbol and caracter != '#':
                     self.language.append(caracter)
                 if caracter == '#':
-                    self.last_counter = self.i_counter
+                    self.final_states.append(self.i_counter)
                 self.i_counter += 1
         self.tree = stack.pop()
         # print(self.tree.value)

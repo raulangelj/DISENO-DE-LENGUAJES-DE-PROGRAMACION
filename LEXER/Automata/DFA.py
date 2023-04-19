@@ -7,6 +7,7 @@ from typing import Dict, List, Tuple
 from Tree.Tree import Tree
 from itertools import combinations
 
+
 class DFA(Automata):
     def __init__(self):
         super().__init__()
@@ -20,8 +21,8 @@ class DFA(Automata):
             return colored(f'"{input_string}" is valid', 'green')
         else:
             return colored(f'"{input_string}" is invalid', 'red')
-        
-    def create_automata(self, postfix: str, tree: Tree, infix:str = 'DFA', originial:str = '') -> None:
+
+    def create_automata(self, postfix: str, tree: Tree, infix: str = 'DFA', originial: str = '') -> None:
         self.infix = infix
         self.original = originial
         Dstates: List[List[int]] = [tree.tree.firstpos()]
@@ -35,19 +36,25 @@ class DFA(Automata):
                 if next_s := list(set(next_s)):
                     if next_s not in Dstates:
                         Dstates.append(next_s)
-                    Dtran.append((Dstates.index(state), simbol, Dstates.index(next_s)))
+                    Dtran.append(
+                        (Dstates.index(state), simbol, Dstates.index(next_s)))
         # set the transitions and create the states
         for initial_state, token, final_state in Dtran:
             # initial state
-            is_final =  tree.last_counter in Dstates[initial_state]
-            initial_state = State(value=initial_state, is_initial=initial_state == 0, is_final=is_final)
+            # is_final =  tree.last_counter in Dstates[initial_state]
+            is_final = self.is_final_state(Dstates[initial_state], tree)
+            initial_state = State(
+                value=initial_state, is_initial=initial_state == 0, is_final=is_final)
             self.add_state(initial_state)
             # final state
-            is_final =  tree.last_counter in Dstates[final_state]
-            final_state = State(value=final_state, is_initial=final_state == 0, is_final=is_final)
+            # is_final = tree.last_counter in Dstates[final_state]
+            is_final = self.is_final_state(Dstates[final_state], tree)
+            final_state = State(value=final_state,
+                                is_initial=final_state == 0, is_final=is_final)
             self.add_state(final_state)
             # transition
-            self.transitions.add_transition(initial_state, Token(token), final_state)
+            self.transitions.add_transition(
+                initial_state, Token(token), final_state)
         # set the alphabet
         alphabet: List[Token] = [Token(token) for token in tree.language]
         self.alphabet = alphabet
@@ -59,9 +66,13 @@ class DFA(Automata):
         for state in self.states:
             if state.is_final:
                 self.final_state = state
-        self.print_automata()
+        # self.print_automata()
         return self
-    
+
+    def is_final_state(self, states: List[int], tree: Tree) -> bool:
+        # check if any value in states is in tree.final_states
+        return any(state in tree.final_states for state in states)
+
     def get_aceptance_and_noaceptance(self) -> Tuple[List[State], List[State]]:
         aceptance = []
         noaceptance = []
@@ -71,7 +82,7 @@ class DFA(Automata):
             else:
                 noaceptance.append(state)
         return aceptance, noaceptance
-    
+
     def is_distingishable(self, state1: State, state2: State, P: List[List[State]]) -> bool:
         for token in self.alphabet:
             # see if the next position of both states is in the same group
@@ -85,7 +96,6 @@ class DFA(Automata):
                         return True
         return False
 
-    
     def minimizing(self) -> DFA:
         aceptance, noaceptance = self.get_aceptance_and_noaceptance()
         P = [aceptance, noaceptance]
@@ -94,7 +104,7 @@ class DFA(Automata):
         while not finished_minimizing:
             P_new = []
             for group in P:
-                separable = {} # dict for distinguishable states
+                separable = {}  # dict for distinguishable states
                 # if the group is only one state add it to the p_new
                 if len(group) == 1:
                     P_new.append([group[0]])
@@ -106,7 +116,8 @@ class DFA(Automata):
                     state1 = self.get_state(int(pair[0].value))
                     state2 = self.get_state(int(pair[1].value))
 
-                    separable[value_pair] = self.is_distingishable(state1, state2, P)
+                    separable[value_pair] = self.is_distingishable(
+                        state1, state2, P)
                 # for pair in combinations(group, 2):
                 #     states_passed = []
                 #     values_pair = ''
@@ -135,15 +146,18 @@ class DFA(Automata):
                         for mini_group in local_groups:
                             if self.get_state(int(pair[0])) in mini_group or self.get_state(int(pair[1])) in mini_group:
                                 if self.get_state(int(pair[0])) not in mini_group:
-                                    mini_group.append(self.get_state(int(pair[0])))
+                                    mini_group.append(
+                                        self.get_state(int(pair[0])))
                                 if self.get_state(int(pair[1])) not in mini_group:
-                                    mini_group.append(self.get_state(int(pair[1])))
+                                    mini_group.append(
+                                        self.get_state(int(pair[1])))
                                 if pair[0] not in already_added:
                                     already_added.append(pair[0])
                                 if pair[1] not in already_added:
                                     already_added.append(pair[1])
                     else:
-                        local_groups.append([self.get_state(int(pair[0])), self.get_state(int(pair[1]))])
+                        local_groups.append(
+                            [self.get_state(int(pair[0])), self.get_state(int(pair[1]))])
                         already_added.extend((pair[0], pair[1]))
                 print(local_groups)
                 # Add the groups to the new P
@@ -157,17 +171,21 @@ class DFA(Automata):
         for group in P_new:
             is_final = any(state.is_final for state in group)
             is_initial = any(state.is_initial for state in group)
-            new_state = State(value=group[0].value, is_initial=is_initial, is_final=is_final)
+            new_state = State(
+                value=group[0].value, is_initial=is_initial, is_final=is_final)
             new_automata.add_state(new_state)
         # Create the transitions
         for state in new_automata.states:
             for token in self.alphabet:
-                next_state = self.transitions.get_transition(self.get_state(int(state.value)), token)
+                next_state = self.transitions.get_transition(
+                    self.get_state(int(state.value)), token)
                 for group in P_new:
                     if next_state != []:
                         if next_state.is_in(group):
-                            new_next_state = new_automata.get_state(int(group[0].value))
-                            new_automata.transitions.add_transition(state, token, new_next_state)
+                            new_next_state = new_automata.get_state(
+                                int(group[0].value))
+                            new_automata.transitions.add_transition(
+                                state, token, new_next_state)
         # Set the alphabet
         new_automata.alphabet = self.alphabet
         # Set the initial state
@@ -186,12 +204,3 @@ class DFA(Automata):
         # todo alphabet should be the same so we can remove this line
         self.alphabet = new_automata.alphabet
         return new_automata
-                
-
-
-
-                
-            
-
-
-

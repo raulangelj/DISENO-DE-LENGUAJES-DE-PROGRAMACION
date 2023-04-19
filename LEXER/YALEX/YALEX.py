@@ -184,12 +184,13 @@ class Yalex():
                 index_to_read += 1
         # find the variable value
         index_to_read += 3 # 3 because we already read the ' = ' word
-        yalex_var, move, convert = self.expect_yalex_var(
+        yalex_var, move = self.expect_yalex_var(
             line[index_to_read:])
         index_to_read += move
-        self.variables[variable_name] = self.convert_to_expression(
-            # yalex_var) if convert else f'({"".join(yalex_var)})'
-            yalex_var) if convert else self.flatten(yalex_var)
+        # self.variables[variable_name] = self.convert_to_expression(
+        #     # yalex_var) if convert else f'({"".join(yalex_var)})'
+        #     yalex_var) if convert else self.flatten(yalex_var)
+        self.variables[variable_name] = self.flatten(yalex_var)
         return index_to_read
         # keep_reading = True
         # index_to_read += 1
@@ -258,9 +259,10 @@ class Yalex():
         index_to_read = 0
         yalex_var = []
         var_name = ''
-        convert = True
+        # convert = True
         is_group = False
         reading_token = False
+        index_to_start_convert = None
         while keep_reading:
             # if var_name in self.variables and not reading_token:
             #     yalex_var.extend(self.variables[var_name])
@@ -273,7 +275,9 @@ class Yalex():
                 is_group = False
                 index_to_read += 1
                 yalex_var += [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+                yalex_var[index_to_start_convert:] = self.convert_to_expression(yalex_var[index_to_start_convert:])
             elif line[index_to_read] == '[':
+                index_to_start_convert = index_to_read
                 is_group = True
                 index_to_read += 1
                 yalex_var += [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
@@ -298,7 +302,7 @@ class Yalex():
                     yalex_var += variable
                     var_name = ''
                     var_name_move += len(var_name)
-                    convert = False
+                    # convert = False
                 yalex_var += [Character(value=line[index_to_read], type=character_types.AGRUPATION)]
                 index_to_read += 1 + var_name_move
                 reading_token = False
@@ -309,7 +313,7 @@ class Yalex():
                     yalex_var += variable
                     var_name = ''
                     var_name_move += len(var_name)
-                    convert = False
+                    # convert = False
                 yalex_var += [Character(value=line[index_to_read], type=character_types.OPERATOR)]
                 reading_token = False
                 index_to_read += 1 + var_name_move
@@ -324,7 +328,7 @@ class Yalex():
                 # else:
                 #     yalex_var += line[index_to_read]
                 #     index_to_read += 1
-        return yalex_var, index_to_read, convert
+        return yalex_var, index_to_read
 
     def expect_range(self, line: str, start_range: str) -> str:
         range_var = []

@@ -1,5 +1,6 @@
 from Convertor.Operators.Constants import OPEN_AGRUPATION_SIMBOL, CLOSE_AGRUPATION_SIMBOL, EMPTY_SIMBOL, CONCATENATION_SIMBOL, KLEENE_SIMBOL, UNION_SIMBOL, OPTIONAL_SIMBOL, PLUS_SIMBOL
-
+from Convertor.Character import *
+from typing import List, Tuple
 
 class Operator():
 	def __init__(self):
@@ -31,26 +32,26 @@ class Operator():
 		@param forward: if the agrupation is forward or backward
 		@return: the agrupation expresion and the number of positions to move
 	'''
-	def find_agrupation(self, expresion):
+	def find_agrupation(self, expresion: List[Character]) -> Tuple[List[Character], int]:
 		close_agrupation_count = 0
 		start_expresion = False
 		agrupation_exp = []
 		positions_move = 0
 		for i in range(len(expresion) - 1, -1, -1):
 			caracter = expresion[i]
-			if caracter == self.agrupation[1]:
+			if caracter.value == self.agrupation[1]:
 				start_expresion = True
 				close_agrupation_count += 1
 			if start_expresion:
 				agrupation_exp.insert(0, caracter)
-			if caracter == self.agrupation[0] and close_agrupation_count > 0:
+			if caracter.value == self.agrupation[0] and close_agrupation_count > 0:
 				close_agrupation_count -= 1
 				start_expresion = close_agrupation_count > 0
 			if close_agrupation_count == 0:
 				positions_move += 1
 				break
 			positions_move += 1
-		return ''.join(agrupation_exp), positions_move
+		return agrupation_exp, positions_move
 
 	def find_agrupation_forward(self, expression, index):
 		agrupation_exp = []

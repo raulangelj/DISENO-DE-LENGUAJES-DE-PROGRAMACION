@@ -4,6 +4,8 @@ from Convertor.Operators.Concat import Concat
 from Convertor.Operators.Or import Or
 from Convertor.SpecialOperators.Optional import Optional
 from Convertor.SpecialOperators.Plus import Plus
+from Convertor.Character import character_types, Character
+from typing import List
 
 
 '''
@@ -81,7 +83,7 @@ class Operators():
 		@param expression: expression to validate (str)
 		@return: expression validated (str)
 	'''
-	def evaluate_rules(self, expression, concat=True):
+	def evaluate_rules(self, expression: List[Character], concat=True, already_evaluated=False):
 		# sourcery skip: raise-specific-error
 		if expression is None or expression == '':
 			raise Exception('Expression is empty')
@@ -120,7 +122,27 @@ class Operators():
 			final_exp, _ = self.concat.validate(factors)
 		else:
 			final_exp = ''.join(factors)
-		return final_exp
+		return factors if already_evaluated else final_exp
+	
+	def remove_special_characters(self, expression: List[Character]) -> List[Character]:
+		new_expresion = []
+		index = 0
+		while index < len(expression):
+			caracter = expression[index].value
+			a = "".join(i.value for i in new_expresion)
+			if caracter == self.plus.get_simbol():
+				plus_operator, move_back = self.plus.evaluate(new_expresion, index)
+				del new_expresion[-move_back:]
+				new_expresion += plus_operator
+			elif caracter == self.optional.get_simbol():
+				optional_operator, move_back = self.optional.evaluate(new_expresion, index)
+				del new_expresion[-move_back:]
+				new_expresion += optional_operator
+			else:
+				new_expresion.append(expression[index])
+			index += 1
+		return new_expresion
+
 
 	'''
 		Validate the agrupations

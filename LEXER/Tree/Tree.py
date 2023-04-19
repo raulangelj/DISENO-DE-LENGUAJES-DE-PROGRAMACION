@@ -1,11 +1,11 @@
-
+from Convertor.Character import Character, character_types
 from Tree.Node import Node
 from Convertor.Parser import Parser
-from typing import Dict
+from typing import Dict, List
 import graphviz as gv
 
 class Tree():
-    def __init__(self, postfix: str):
+    def __init__(self, postfix: List[Character]):
         self.postfix = postfix
         self.tree = None
         self.parser: Parser = Parser()
@@ -14,46 +14,34 @@ class Tree():
         self.language = []
         self.leaves: Dict[int, Node] = {}
         self.last_counter = -1
-        self.dot = gv.Digraph(comment=f'{self.postfix} Tree')
-        self.dot.attr(label=f'{self.postfix} Tree')
+        self.dot = gv.Digraph(comment=f'{self.get_postfix()} Tree')
+        self.dot.attr(label=f'{self.get_postfix()} Tree')
 
     def create_tree(self) -> None:
         stack = []
-        keep_reading = True
-        index = 0
         if not self.postfix:
             return
-        while keep_reading:
-        # for caracter in self.postfix:
-        # for index in range(len(self.postfix)):
-            # caracter = self.postfix[index]
-            if index > len(self.postfix) - 1:
-                keep_reading = False
-            elif self.parser.operators.is_two_param_operator(self.postfix[index]):
-                z = Node(self.postfix[index])
+        for simbol in self.postfix:
+            caracter = simbol.value
+            if self.parser.operators.is_two_param_operator(caracter):
+                z = Node(value=caracter, type=simbol.type, label=simbol.label)
                 right = stack.pop()
                 left = stack.pop()
                 z.left = left
                 z.right = right
                 stack.append(z)
-            elif self.parser.operators.is_one_param_operator(self.postfix[index]):
-                z = Node(self.postfix[index])
+            elif self.parser.operators.is_one_param_operator(caracter):
+                z = Node(value=caracter, type=simbol.type, label=simbol.label)
                 left = stack.pop()
                 z.left = left
                 stack.append(z)
             else:
-                char_value = self.postfix[index] + self.postfix[index + 1] + self.postfix[index + 2]
-                if char_value == '092':
-                    char_value += self.postfix[index + 3] + self.postfix[index + 4] + self.postfix[index + 5]
-                    index += 3
-                stack.append(Node(value=char_value, i=self.i_counter))
-                if char_value not in self.language and char_value != self.parser.operators.optional.empty_simbol and char_value != '#':
-                    self.language.append(char_value)
-                if char_value == '#':
+                stack.append(Node(value=caracter, i=self.i_counter, type=simbol.type, label=simbol.label))
+                if caracter not in self.language and caracter != self.parser.operators.optional.empty_simbol and caracter != '#':
+                    self.language.append(caracter)
+                if caracter == '#':
                     self.last_counter = self.i_counter
                 self.i_counter += 1
-                index += 2
-            index += 1
         self.tree = stack.pop()
         # print(self.tree.value)
         # self.inorder(self.tree)
@@ -74,15 +62,18 @@ class Tree():
 
     def render_tree(self, x):
         if x.left:
-            self.dot.node(x.left.uuid, x.left.value)
+            label = x.left.value + '\n' + x.left.label if x.left.type == character_types.SIMBOL else x.left.value 
+            self.dot.node(x.left.uuid, label)
             self.dot.edge(x.uuid, x.left.uuid)
             self.render_tree(x.left)
         if x.right:
-            self.dot.node(x.right.uuid, x.right.value)
+            label = x.right.value + '\n' + x.right.label if x.right.type == character_types.SIMBOL else x.right.value
+            self.dot.node(x.right.uuid, label)
             self.dot.edge(x.uuid, x.right.uuid)
             self.render_tree(x.right)
         if x.uuid == self.tree.uuid:
-            self.dot.node(x.uuid, x.value)
+            label = x.label + '\n' + x.label if x.type == character_types.SIMBOL else x.value
+            self.dot.node(x.uuid, label)
             self.dot.render('LEXER/output/tree.gv', view=True)
         
     
@@ -108,3 +99,6 @@ class Tree():
     def followpos(self) -> None:
         followpos = {}
         # iterate my tree 
+
+    def get_postfix(self) -> str:
+        return ''.join(character.label for character in self.postfix)

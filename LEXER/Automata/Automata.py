@@ -81,11 +81,14 @@ class Automata():
 			if token.value != EmptyToken().value:
 				self.alphabet.append(token)
 		self.transitions = automata.transitions
+
+	def get_postfix(self) -> str:
+		return ''.join(character.label for character in self.infix)
 	
 	def create_graph(self, fileName: str = 'Automata', ) -> None:
 		fileName = 'Automata' if not fileName or fileName is None else fileName
 		dot = gv.Digraph(comment=f'{fileName} Graph')
-		dot.attr(rankdir='LR', label=f'{fileName} Graph: {self.original}')
+		dot.attr(rankdir='LR', label=f'{fileName} Graph: {self.get_postfix()}')
 		dot.engine = 'dot'
 		# Nodes to graph
 		dot.node('initial', 'initial', shape='point')

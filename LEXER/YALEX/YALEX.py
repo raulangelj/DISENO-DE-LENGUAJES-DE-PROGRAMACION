@@ -1,5 +1,6 @@
 from typing import List
 from Convertor.Simbols import Operators
+from Convertor.Character import Character, character_types
 
 LINE_CLOSING = '\n'
 OPEN_COMMENT = '(*'
@@ -76,7 +77,6 @@ class Yalex():
                     index += move
                     word = ''
             index += 1
-
         self.expression = self.operators.concat.validate(self.rule)
         return self.expression
 
@@ -101,6 +101,8 @@ class Yalex():
         reading_return = False
         reading_comment = False
         actual_comment = ''
+        last_var_name = ''
+        return_value = ''
         while keep_reading:
             if index_to_read >= len(line):
                 keep_reading = False
@@ -115,8 +117,12 @@ class Yalex():
                 actual_comment += line[index_to_read]
             elif line[index_to_read] == '}':
                 reading_return = False
+                return_value += line[index_to_read]
+                rule_returns[last_var_name] = return_value
+                return_value = ''
             elif line[index_to_read] == '{' or reading_return:
                 reading_return = True
+                return_value += line[index_to_read]
             elif (
                 line[index_to_read] is not LINE_CLOSING
                 and line[index_to_read] != ' '
@@ -127,35 +133,41 @@ class Yalex():
                 var_name += line[index_to_read]
             elif line[index_to_read] == "'":
                 string, move = self.expect_single_quote(line[index_to_read:])
-                var_name += string
+                var_name += string.value
                 index_to_read += move
-                rule_value[var_name] = var_name
+                rule_value[var_name] = [string]
                 # arreglar para que lea loq ue viene
-                rule_returns[var_name] = var_name
+                # rule_returns[var_name] = var_name
+                last_var_name = var_name
                 var_name = ''
             elif line[index_to_read] == '"':
                 string, move = self.expect_double_quote(line[index_to_read:])
-                string = "".join(string)
-                var_name += string
+                # string = "".join(string)
+                # string = string.value
+                var_name += "".join(i.value for i in string)
                 index_to_read += move
-                rule_value[var_name] = var_name
+                rule_value[var_name] = string
                 # arreglar para que lea loq ue viene
-                rule_returns[var_name] = var_name
+                # rule_returns[var_name] = var_name
+                last_var_name = var_name
                 var_name = ''
             elif var_name != ' ' and var_name in self.variables:
                 rule_value[var_name] = self.variables[var_name]
                 # arreglar para que lea loq ue viene
-                rule_returns[var_name] = var_name
+                # rule_returns[var_name] = var_name
+                last_var_name = var_name
                 var_name = ''
             # llego al or y no encontro la variable
             elif var_name != '' and line[index_to_read] == self.operators.or_op.simbol:
                 raise Exception(f'Variable "{var_name}" not found')
             index_to_read += 1
-        rule_value_string = '('
+        rule_value_array = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
         for value in rule_value.values():
-            rule_value_string += f'({value})|'
-        rule_value_string = f'{rule_value_string[:-1]})'
-        self.rule = rule_value_string
+            # rule_value_string += f'({value})|'
+            rule_value_array += [value, Character(value='#', type=character_types.FINAL), Character(value=self.operators.or_op.simbol, type=character_types.OPERATOR)]
+        # rule_value_string = f'{rule_value_string[:-1]})'
+        rule_value_array = rule_value_array[:-1] + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+        self.rule = self.flatten(rule_value_array)
         return index_to_read
 
     def variable_declaration(self, line: str) -> None:
@@ -177,7 +189,7 @@ class Yalex():
         index_to_read += move
         self.variables[variable_name] = self.convert_to_expression(
             # yalex_var) if convert else f'({"".join(yalex_var)})'
-            yalex_var) if convert else "".join(yalex_var)
+            yalex_var) if convert else self.flatten(yalex_var)
         return index_to_read
         # keep_reading = True
         # index_to_read += 1
@@ -188,8 +200,17 @@ class Yalex():
         #     else:
         #         variable_value += line[index_to_read]
         #         index_to_read += 1
+    
+    def flatten(self, lst):
+        result = []
+        for item in lst:
+            if isinstance(item, list):
+                result.extend(self.flatten(item))
+            else:
+                result.append(item)
+        return result
 
-    def convert_to_expression(self, variable: List[str]) -> str:
+    def convert_to_expression(self, variable: List[Character]) -> List[Character]:
         # return f'({"|".join(variable)})'
 
         # final_value = '('
@@ -212,14 +233,17 @@ class Yalex():
         #         result += variable[i] + '|'
         # return result
 
-        result = ''
+        result = []
         for i in range(len(variable)):
-            if self.operators.concat.is_simbol(variable[i]):
-                result += variable[i]
-            elif not self.operators.concat.is_simbol(variable[i]) and not self.operators.concat.is_simbol(variable[i + 1]):
-                result += f'{variable[i]}|'
+            val = variable[i].value
+            next_val = variable[i + 1].value if i < len(variable) - 1 else None
+            if self.operators.concat.is_simbol(val) or i == len(variable) - 1:
+                result += [variable[i]]
+            elif not self.operators.concat.is_simbol(val) and not self.operators.concat.is_simbol(next_val):
+                # result += f'{variable[i]}|'
+                result += [variable[i], Character(value='|', type=character_types.OPERATOR)]
             else:
-                result += variable[i]
+                result += [variable[i]]
         return result
 
 
@@ -248,18 +272,18 @@ class Yalex():
             elif line[index_to_read] == ']':
                 is_group = False
                 index_to_read += 1
-                yalex_var.append(self.operators.agrupation[1])
+                yalex_var += [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
             elif line[index_to_read] == '[':
                 is_group = True
                 index_to_read += 1
-                yalex_var.append(self.operators.agrupation[0])
+                yalex_var += [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
             elif line[index_to_read] == '"':
                 string, move = self.expect_double_quote(line[index_to_read:])
                 yalex_var += string
                 index_to_read += move + 1
             elif line[index_to_read] == "'":
                 string, move = self.expect_single_quote(line[index_to_read:])
-                yalex_var.append(string)
+                yalex_var += [string]
                 index_to_read += move + 1
             elif line[index_to_read] == '-':
                 string, move = self.expect_range(
@@ -270,21 +294,23 @@ class Yalex():
             elif self.operators.is_agrupation(line[index_to_read]):
                 var_name_move = 0
                 if reading_token:
-                    yalex_var.append(self.return_variable(var_name))
+                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + self.return_variable(var_name) + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+                    yalex_var += variable
                     var_name = ''
                     var_name_move += len(var_name)
                     convert = False
-                yalex_var.append(line[index_to_read])
+                yalex_var += [Character(value=line[index_to_read], type=character_types.AGRUPATION)]
                 index_to_read += 1 + var_name_move
                 reading_token = False
             elif self.operators.is_operator(line[index_to_read]):
                 var_name_move = 0
                 if reading_token:
-                    yalex_var.append(self.return_variable(var_name))
+                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + self.return_variable(var_name) + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+                    yalex_var += variable
                     var_name = ''
                     var_name_move += len(var_name)
                     convert = False
-                yalex_var.append(line[index_to_read])
+                yalex_var += [Character(value=line[index_to_read], type=character_types.OPERATOR)]
                 reading_token = False
                 index_to_read += 1 + var_name_move
             else:
@@ -303,8 +329,8 @@ class Yalex():
     def expect_range(self, line: str, start_range: str) -> str:
         range_var = []
         end_range, move = self.expect_single_quote(line[1:])
-        range_var.extend(str(i).zfill(3)
-                         for i in range(int(start_range), int(end_range) + 1))
+        range_var.extend(Character(value=str(i).zfill(3), type=character_types.SIMBOL, label=chr(i))
+                         for i in range(int(start_range.value), int(end_range.value) + 1))
         return range_var, 1 + move
 
     def expect_single_quote(self, line: str) -> str:
@@ -314,7 +340,8 @@ class Yalex():
             regular_char += line[2]
             ascii_char += str(ord(line[2])).zfill(3)
         # ascii_char = str(ord(regular_char[0])).zfill(3) + str(ord(regular_char[1])).zfill(3)
-        return ascii_char, len(regular_char) + 1
+        char = Character(value=ascii_char, type=character_types.SIMBOL, label=regular_char)
+        return char, len(regular_char) + 1
         # keep_reading = True
         # index_to_read = 1
         # regular_char = ''

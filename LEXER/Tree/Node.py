@@ -1,16 +1,19 @@
 from Automata.Token import Token
 from Convertor.Operators.Operator import Operator
 from uuid import uuid4
+from Convertor.Character import character_types
 
 
 class Node():
-    def __init__(self, value: str = None, left: str = None, right: str = None, i=None) -> None:
+    def __init__(self, value: str = None, left: str = None, right: str = None, i=None, type: character_types = character_types.SIMBOL, label: str = None) -> None:
         self.value = value
         self.left = left
         self.right = right
         self.operator = Operator()
         self.i = i
         self.uuid = str(uuid4())
+        self.type = type
+        self.label = label or value 
         # show the str instead of the ascii
         # if len(value) == 3:
         #     self.value = chr(int(value))

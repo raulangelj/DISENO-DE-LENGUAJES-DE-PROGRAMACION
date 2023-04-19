@@ -9,7 +9,7 @@ class TokenModel():
 class Token():
 	def __init__(self, value):
 		self.value = value
-		self.ascii = ord(value)
+		self.ascii = chr(int(value))
 	
 	def model(self) -> TokenModel:
 		return {

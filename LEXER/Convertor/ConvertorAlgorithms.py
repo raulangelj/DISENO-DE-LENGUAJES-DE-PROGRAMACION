@@ -1,4 +1,6 @@
+from typing import List
 from Convertor.Simbols import Operators
+from Convertor.Character import Character
 
 '''
 	Class to implement the algorithms to convert
@@ -19,7 +21,7 @@ class Algorithms():
 		@param infix: infix expression (str)
 		@return: postfix expression (str)
 	'''
-	def get_result_postfix(self, infix):
+	def get_result_postfix(self, infix: List[Character]) -> List[Character]:
 		return self.shunting_yard(infix) if self.algorithm == 'shunting_yard' else None
 
 	'''
@@ -27,40 +29,25 @@ class Algorithms():
 		@param infix: infix expression (str)
 		@return: postfix expression (str)
 	'''
-	def shunting_yard(self, infix):
+	def shunting_yard(self, infix: List[Character]) -> List[Character]:
 		self.operators_stack = []
 		self.output_queue = []
-		keep_reading = True
-		index = 0
 		# For each token in the infix string
-		# for index in range(len(infix)):
-		while keep_reading:
-			# caracter = infix[index]
-			if index > len(infix) - 1:
-				keep_reading = False
+		for character in infix:
 			# If the token is not a operator or agrupation (language) then add it to the output queue
 			# print('caracter: ', caracter)
-			elif not self.operators.is_operator(infix[index]) and not self.operators.is_agrupation(infix[index]):
+			caracter = character.value
+			if not self.operators.is_operator(caracter) and not self.operators.is_agrupation(caracter):
 				# print('is not operator')
-				char_val = infix[index] + infix[index + 1] + infix[index + 2]
-				if char_val == '092':
-					char_val += infix[index + 3] + infix[index + 4] + infix[index + 5]
-					index += 3
-				self.output_queue.append(char_val)
-				# self.output_queue.append(caracter)
-				# self.output_queue.append(infix[index + 1])
-				# self.output_queue.append(infix[index + 2])
-				index += 2
-				# cambiar por while y cocntrol el index
-
+				self.output_queue.append(character)
 			# If the token is a left agrupation then push it onto the operators stack
-			elif self.operators.is_left_agrupation(infix[index]):
+			elif self.operators.is_left_agrupation(caracter):
 				# print('is left agrupation')
-				self.operators_stack.append(infix[index])
+				self.operators_stack.append(character)
 			# If the token is a right agrupation then pop operators from the operators stack onto the output queue until the matching left agrupation is found
-			elif self.operators.is_right_agrupation(infix[index]):
+			elif self.operators.is_right_agrupation(caracter):
 				# print('is right agrupation')
-				while self.operators_stack and not self.operators.is_left_agrupation(self.operators_stack[-1]):
+				while self.operators_stack and not self.operators.is_left_agrupation(self.operators_stack[-1].value):
 					# print('pop: ', self.operators_stack[-1])
 					self.output_queue.append(self.operators_stack.pop())
 				# Pop the left agrupation from the stack, but not onto the output queue
@@ -74,14 +61,13 @@ class Algorithms():
 				# if self.operators_stack:
 					# print('ultimo operador: ', self.operators_stack[-1], ' con prioridad: ', self.operators.get_operator_priority(self.operators_stack[-1]))
 					# print('caracter: ', caracter, ' con prioridad: ', self.operators.get_operator_priority(caracter))
-				while self.operators_stack and self.operators.get_operator_priority(self.operators_stack[-1]) >= self.operators.get_operator_priority(infix[index]):
+				while self.operators_stack and self.operators.get_operator_priority(self.operators_stack[-1].value) >= self.operators.get_operator_priority(caracter):
 					# print('entro al while', self.operators_stack[-1], ' >= ', caracter)
 					self.output_queue.append(self.operators_stack.pop())
 				# push the token onto the operators stack
-				self.operators_stack.append(infix[index])
+				self.operators_stack.append(character)
 				# print('operators_stack: ', self.operators_stack)
 				# print('output_queue: ', self.output_queue)
-			index += 1
 		# print('Se acabo el for')
 		# print('operators_stack: ', self.operators_stack)
 		# print('output_queue: ', self.output_queue)
@@ -94,4 +80,4 @@ class Algorithms():
 		# print('termino')
 		# print('operators_stack: ', self.operators_stack)
 		# print('output_queue: ', self.output_queue)
-		return ''.join(self.output_queue)
+		return self.output_queue

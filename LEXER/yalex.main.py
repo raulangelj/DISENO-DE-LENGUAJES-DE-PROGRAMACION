@@ -1,7 +1,9 @@
 from YALEX.YALEX import Yalex
 from termcolor import colored
 from Convertor.ConvertorAlgorithms import Algorithms
+from Convertor.Parser import Parser
 from Tree.Tree import Tree
+from Automata.DFA import DFA
 
 
 def main():
@@ -21,6 +23,24 @@ def main():
                 tree = Tree(postfix=postfix)
                 tree.create_tree()
                 tree.render_tree(tree.tree)
+                parser = Parser()
+                a = ''.join(i.value for i in yalex.expression)
+                print(a)
+                clean_infix = parser.remove_special_characters(yalex.expression)
+                a = ''.join(i.value for i in clean_infix)
+                print(a)
+                new_postfix = algorithms.get_result_postfix(clean_infix)
+                tree_automata = Tree(new_postfix)
+                tree_automata.create_tree()
+                tree_automata.render_tree(tree_automata.tree)
+                tree_automata.followpos_recursive(tree_automata.tree)
+                adf = DFA()
+                adf.create_automata(postfix=new_postfix, tree=tree_automata, infix=clean_infix, originial=clean_infix)
+                adf.create_graph('DFA')
+                            # tree.followpos_recursive(tree.tree)
+                            # dfa = DFA()
+                            # dfa.create_automata(postfix=postfix, tree=tree, infix=yalex.expression, originial=yalex.expression)
+                            # dfa.create_graph('DFA')
             except Exception as e:
                 print(colored(e, 'red'))
         elif option == '2':

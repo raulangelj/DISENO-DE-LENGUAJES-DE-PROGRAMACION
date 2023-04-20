@@ -23,6 +23,8 @@ class DFA(Automata):
         word = []
         last_accepted = None
         index = 0
+        last_accepted_index = -1
+        start_word_index = 0
         # for caracter in input_string.characters:
         while index < len(input_string.characters):
             caracter = input_string.characters[index]
@@ -34,15 +36,19 @@ class DFA(Automata):
                     ((True, state) for state in current_states if state.is_final), (False, None))
                 if is_valid:
                     last_accepted = final_state
+                    last_accepted_index = index
                 index += 1
             elif last_accepted:
                 # token_list.append([Characters(characters_list=word), last_accepted.return_value])
                 tokenList = tokenListModel()
-                tokenList.characters = Characters(characters_list=word)
+                tokenList.characters = Characters(characters_list=word[:last_accepted_index - start_word_index + 1])
                 tokenList.accepted_state = last_accepted
                 token_list.append(tokenList)
                 word = []
                 current_states = [self.initial_state]
+                index = last_accepted_index + 1
+                start_word_index = index
+                last_accepted_index = -1
                 last_accepted = None
             #     continue
             # else:

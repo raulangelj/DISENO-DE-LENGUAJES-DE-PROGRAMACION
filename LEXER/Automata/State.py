@@ -11,10 +11,11 @@ class StateModel():
 
 
 class State():
-	def __init__(self, is_final=False, is_initial=False, value:int = randint(0, 1000)) -> None:
+	def __init__(self, is_final=False, is_initial=False, value:int = randint(0, 1000), return_value=None) -> None:
 		self.value = value
 		self.is_final = is_final
 		self.is_initial = is_initial
+		self.return_value = return_value
 		self.transitions = {}  # ? Se manejaran las transiciones aqui? o mejor en el automata?
 
 	def model(self) -> StateModel:

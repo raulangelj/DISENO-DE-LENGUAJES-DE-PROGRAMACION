@@ -7,7 +7,6 @@ from typing import Dict, List, Tuple
 from Tree.Tree import Tree
 from itertools import combinations
 
-
 class DFA(Automata):
     def __init__(self):
         super().__init__()
@@ -15,10 +14,16 @@ class DFA(Automata):
     def simulate(self, input_string: str) -> str:
         current_states = [self.initial_state]
         for caracter in input_string:
-            current_states = self.move(current_states, Token(caracter))
-        is_valid = any(state.is_final for state in current_states)
+            current_states = self.move(
+                current_states, Token(str(ord(caracter)).zfill(3)))
+        # is_valid = any(state.is_final for state in current_states)
+        is_valid, final_state = next(
+            ((True, state) for state in current_states if state.is_final), (False, None))
         if is_valid:
-            return colored(f'"{input_string}" is valid', 'green')
+            return colored(
+                f'"{input_string}" is valid: {final_state.return_value.value}',
+                'green',
+            )
         else:
             return colored(f'"{input_string}" is invalid', 'red')
 
@@ -42,15 +47,21 @@ class DFA(Automata):
         for initial_state, token, final_state in Dtran:
             # initial state
             # is_final =  tree.last_counter in Dstates[initial_state]
-            is_final = self.is_final_state(Dstates[initial_state], tree)
+            is_final, leave_index = self.is_final_state(
+                Dstates[initial_state], tree)
+            return_value = tree.find_final_state_data(
+                leave_index) if is_final else None
             initial_state = State(
-                value=initial_state, is_initial=initial_state == 0, is_final=is_final)
+                value=initial_state, is_initial=initial_state == 0, is_final=is_final, return_value=return_value)
             self.add_state(initial_state)
             # final state
             # is_final = tree.last_counter in Dstates[final_state]
-            is_final = self.is_final_state(Dstates[final_state], tree)
+            is_final, leave_index = self.is_final_state(
+                Dstates[final_state], tree)
+            return_value = tree.find_final_state_data(
+                leave_index) if is_final else None
             final_state = State(value=final_state,
-                                is_initial=final_state == 0, is_final=is_final)
+                                is_initial=final_state == 0, is_final=is_final, return_value=return_value)
             self.add_state(final_state)
             # transition
             self.transitions.add_transition(
@@ -69,9 +80,12 @@ class DFA(Automata):
         # self.print_automata()
         return self
 
-    def is_final_state(self, states: List[int], tree: Tree) -> bool:
-        # check if any value in states is in tree.final_states
-        return any(state in tree.final_states for state in states)
+    def is_final_state(self, states: List[int], tree: Tree) -> Tuple(bool, str | None):
+        return next(
+            ((True, state) for state in states if state in tree.final_states),
+            (False, None),
+        )
+        # return any(state in tree.final_states for state in states)
 
     def get_aceptance_and_noaceptance(self) -> Tuple[List[State], List[State]]:
         aceptance = []

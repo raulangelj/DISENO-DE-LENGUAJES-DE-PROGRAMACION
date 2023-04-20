@@ -4,6 +4,7 @@ from Convertor.ConvertorAlgorithms import Algorithms
 from Convertor.Parser import Parser
 from Tree.Tree import Tree
 from Automata.DFA import DFA
+from Convertor.Character import *
 
 
 def main():
@@ -24,19 +25,22 @@ def main():
                 tree.create_tree()
                 tree.render_tree(tree.tree)
                 parser = Parser()
-                a = ''.join(i.value for i in yalex.expression)
-                print(a)
                 clean_infix = parser.remove_special_characters(yalex.expression)
-                a = ''.join(i.value for i in clean_infix)
-                print(a)
                 new_postfix = algorithms.get_result_postfix(clean_infix)
-                tree_automata = Tree(new_postfix)
+                tree_automata = Tree(new_postfix, yalex.rules)
                 tree_automata.create_tree()
                 tree_automata.render_tree(tree_automata.tree)
                 tree_automata.followpos_recursive(tree_automata.tree)
                 adf = DFA()
                 adf.create_automata(postfix=new_postfix, tree=tree_automata, infix=clean_infix, originial=clean_infix)
                 adf.create_graph('DFA')
+                print(adf.simulate('hola'))
+                print(adf.simulate(' '))
+                print(adf.simulate('1'))
+                print(adf.simulate(';'))
+                print(adf.simulate(')'))
+                print(adf.simulate('11.11E-11'))
+                print(adf.simulate('1.1.1.E15'))
                             # tree.followpos_recursive(tree.tree)
                             # dfa = DFA()
                             # dfa.create_automata(postfix=postfix, tree=tree, infix=yalex.expression, originial=yalex.expression)

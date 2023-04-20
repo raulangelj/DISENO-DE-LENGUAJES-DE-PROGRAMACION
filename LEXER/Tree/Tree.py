@@ -2,10 +2,13 @@ from Convertor.Character import Character, character_types
 from Tree.Node import Node
 from Convertor.Parser import Parser
 from typing import Dict, List
+from YALEX.YALEX import ReturnModel
 import graphviz as gv
 
 class Tree():
-    def __init__(self, postfix: List[Character]):
+    def __init__(self, postfix: List[Character], rules: List[ReturnModel] = None):
+        if rules is None:
+            rules = []
         self.postfix = postfix
         self.tree = None
         self.parser: Parser = Parser()
@@ -16,9 +19,11 @@ class Tree():
         self.final_states = []
         self.dot = gv.Digraph(comment=f'{self.get_postfix()} Tree')
         self.dot.attr(label=f'{self.get_postfix()} Tree')
+        self.rules = rules
 
     def create_tree(self) -> None:
         stack = []
+        final_states_counter = 0
         if not self.postfix:
             return
         for simbol in self.postfix:
@@ -41,10 +46,19 @@ class Tree():
                     self.language.append(caracter)
                 if caracter == '#':
                     self.final_states.append(self.i_counter)
+                    if self.rules:
+                        self.rules[final_states_counter].leave_index = self.i_counter
+                    final_states_counter += 1
                 self.i_counter += 1
         self.tree = stack.pop()
         # print(self.tree.value)
         # self.inorder(self.tree)
+    
+    def find_final_state_data(self, leave_id: int) -> ReturnModel:
+        return next(
+            (rule for rule in self.rules if rule.leave_index == leave_id), None
+        )
+
 
     def inorder(self, x):
         if not x:

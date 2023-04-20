@@ -6,6 +6,13 @@ LINE_CLOSING = '\n'
 OPEN_COMMENT = '(*'
 CLOSE_COMMENT = '*)'
 
+class ReturnModel():
+    def __init__(self) -> None:
+        self.token_id = ''
+        self.value = ''
+        self.leave_index = -1
+
+
 
 class Yalex():
     def __init__(self, file_to_read: str) -> None:
@@ -98,6 +105,7 @@ class Yalex():
         index_to_read += 2  # 2 because we already read the '= ' word
         rule_value = {}
         rule_returns = {}
+        rules = [] # arreglo con la estructura de { token_id: 'token_name', value: 'token_value'}
         reading_return = False
         reading_comment = False
         actual_comment = ''
@@ -106,6 +114,14 @@ class Yalex():
         while keep_reading:
             if index_to_read >= len(line):
                 keep_reading = False
+                # check if there is missing a rule
+                if len(rule_value) > len(rules):
+                    value_ = rule_returns[last_var_name] if last_var_name in rule_returns else ''
+                    token = ReturnModel()
+                    token.token_id = last_var_name
+                    token.value = value_
+                    token.leave_index = None
+                    rules.append(token)
             elif line[index_to_read] == CLOSE_COMMENT[0] and line[index_to_read + 1] == CLOSE_COMMENT[1]:
                 actual_comment += line[index_to_read] + line[index_to_read + 1]
                 index_to_read += 1
@@ -151,6 +167,19 @@ class Yalex():
                 # rule_returns[var_name] = var_name
                 last_var_name = var_name
                 var_name = ''
+            elif line[index_to_read] == self.operators.or_op.simbol:
+                # encontro el or
+                value_ = rule_returns[last_var_name] if last_var_name in rule_returns else 'RETURN_NOT_FOUND'
+                token = ReturnModel()
+                token.token_id = last_var_name
+                token.value = value_
+                token.leave_index = None
+                # token = {
+                #     'token_id': last_var_name,
+                #     'value': value_,
+                #     'leave_index': None
+                # }
+                rules.append(token)
             elif var_name != ' ' and var_name in self.variables:
                 rule_value[var_name] = self.variables[var_name]
                 # arreglar para que lea loq ue viene
@@ -161,6 +190,8 @@ class Yalex():
             elif var_name != '' and line[index_to_read] == self.operators.or_op.simbol:
                 raise Exception(f'Variable "{var_name}" not found')
             index_to_read += 1
+        self.rules = rules
+        self.rule_returns = rule_returns
         rule_value_array = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
         for value in rule_value.values():
             # rule_value_string += f'({value})|'

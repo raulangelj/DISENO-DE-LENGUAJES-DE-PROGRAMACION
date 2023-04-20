@@ -6,26 +6,70 @@ from termcolor import colored
 from typing import Dict, List, Tuple
 from Tree.Tree import Tree
 from itertools import combinations
+from Convertor.Character import Characters
+
+class tokenListModel():
+    def __init__(self):
+        self.characters: Characters = []
+        self.accepted_state: State | None = None
 
 class DFA(Automata):
     def __init__(self):
         super().__init__()
 
-    def simulate(self, input_string: str) -> str:
+    def simulate(self, input_string: Characters) -> str:
         current_states = [self.initial_state]
-        for caracter in input_string:
+        token_list:List[tokenListModel] = []
+        word = []
+        last_accepted = None
+        index = 0
+        # for caracter in input_string.characters:
+        while index < len(input_string.characters):
+            caracter = input_string.characters[index]
             current_states = self.move(
-                current_states, Token(str(ord(caracter)).zfill(3)))
+                current_states, Token(value=caracter.value, label=caracter.label))
+            if current_states:
+                word.append(caracter)
+                is_valid, final_state = next(
+                    ((True, state) for state in current_states if state.is_final), (False, None))
+                if is_valid:
+                    last_accepted = final_state
+                index += 1
+            elif last_accepted:
+                # token_list.append([Characters(characters_list=word), last_accepted.return_value])
+                tokenList = tokenListModel()
+                tokenList.characters = Characters(characters_list=word)
+                tokenList.accepted_state = last_accepted
+                token_list.append(tokenList)
+                word = []
+                current_states = [self.initial_state]
+                last_accepted = None
+            #     continue
+            # else:
+            #     return colored(f'"{input_string}" is invalid', 'red')
+        # store the last value if it is valid
+        if last_accepted:
+            tokenList = tokenListModel()
+            tokenList.characters = Characters(characters_list=word)
+            tokenList.accepted_state = last_accepted
+            token_list.append(tokenList)
+        # print the token list characters with the retunr value of the last accepted state
+        for token in token_list:
+            print(token.characters, ':', token.accepted_state.return_value.value)
+        return token_list  
+            
+
+                
         # is_valid = any(state.is_final for state in current_states)
-        is_valid, final_state = next(
-            ((True, state) for state in current_states if state.is_final), (False, None))
-        if is_valid:
-            return colored(
-                f'"{input_string}" is valid: {final_state.return_value.value}',
-                'green',
-            )
-        else:
-            return colored(f'"{input_string}" is invalid', 'red')
+        # is_valid, final_state = next(
+        #     ((True, state) for state in current_states if state.is_final), (False, None))
+        # if is_valid:
+        #     return colored(
+        #         f'"{input_string}" is valid: {final_state.return_value.value}',
+        #         'green',
+        #     )
+        # else:
+        #     return colored(f'"{input_string}" is invalid', 'red')
 
     def create_automata(self, postfix: str, tree: Tree, infix: str = 'DFA', originial: str = '') -> None:
         self.infix = infix

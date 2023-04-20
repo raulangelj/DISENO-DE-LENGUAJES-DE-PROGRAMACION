@@ -34,13 +34,21 @@ def main():
                 adf = DFA()
                 adf.create_automata(postfix=new_postfix, tree=tree_automata, infix=clean_infix, originial=clean_infix)
                 adf.create_graph('DFA')
-                print(adf.simulate('hola'))
-                print(adf.simulate(' '))
-                print(adf.simulate('1'))
-                print(adf.simulate(';'))
-                print(adf.simulate(')'))
-                print(adf.simulate('11.11E-11'))
-                print(adf.simulate('1.1.1.E15'))
+                # print(adf.simulate('hola'))
+                # print(adf.simulate(' '))
+                # print(adf.simulate('1'))
+                # print(adf.simulate(';'))
+                # print(adf.simulate(')'))
+                # print(adf.simulate('11.11E-11'))
+                # print(adf.simulate('1.1.1.E15'))
+                text_to_analyze = ''
+                # open file cualquiera.txt that is in the same folder as this file
+                with open('LEXER/cualquiera.txt', 'r') as file:
+                    for line in file:
+                        for character in line:
+                            text_to_analyze += character
+                sentece = Characters(text_to_analyze)
+                print(adf.simulate(sentece))
                             # tree.followpos_recursive(tree.tree)
                             # dfa = DFA()
                             # dfa.create_automata(postfix=postfix, tree=tree, infix=yalex.expression, originial=yalex.expression)

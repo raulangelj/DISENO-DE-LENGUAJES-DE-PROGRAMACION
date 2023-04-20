@@ -50,6 +50,19 @@ class DFA(Automata):
                 start_word_index = index
                 last_accepted_index = -1
                 last_accepted = None
+            else:
+                tokenList = tokenListModel()
+                tokenList.characters = Characters()
+                tokenList.characters.characters = [caracter]
+                not_valid_state = State(value='NOT_VALID', is_final=True, return_value=Token(value='NOT_VALID', label='NOT_VALID'))
+                tokenList.accepted_state = not_valid_state
+                token_list.append(tokenList)
+                word = []
+                current_states = [self.initial_state]
+                index += 1
+                start_word_index = index
+                last_accepted_index = -1
+                last_accepted = None
             #     continue
             # else:
             #     return colored(f'"{input_string}" is invalid', 'red')

@@ -1,4 +1,4 @@
-from Tree.Tree import Tree
+from src.Tree.Tree import Tree
 
 
 def genTree():

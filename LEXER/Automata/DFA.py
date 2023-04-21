@@ -4,7 +4,7 @@ from Automata.State import State
 from Automata.Token import Token
 from termcolor import colored
 from typing import Dict, List, Tuple
-from Tree.Tree import Tree
+from src.Tree.Tree import Tree
 from itertools import combinations
 from Convertor.Character import Characters
 from enum import Enum

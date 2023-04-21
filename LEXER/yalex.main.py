@@ -5,7 +5,7 @@ from src.YALEX.YALEX import Yalex
 from termcolor import colored
 from Convertor.ConvertorAlgorithms import Algorithms
 from Convertor.Parser import Parser
-from Tree.Tree import Tree
+from src.Tree.Tree import Tree
 from Automata.DFA import DFA
 from Convertor.Character import *
 

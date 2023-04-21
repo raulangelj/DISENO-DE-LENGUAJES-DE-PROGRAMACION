@@ -1,5 +1,5 @@
 from Convertor.Parser import Parser
-from Tree.Tree import Tree
+from src.Tree.Tree import Tree
 from Automata.NFA import NFA
 from Automata.DFA import DFA
 

@@ -76,7 +76,7 @@ class Yalex():
                 elif (char == OPEN_COMMENT[0] and filex_text[index + 1] == OPEN_COMMENT[1]) or reading_comment:
                     reading_comment = True
                     actual_comment += char
-                elif word == 'rule ' or reading_rule:
+                elif word[-5:] == 'rule ' or reading_rule:
                     index += 1 # add 1 because we already read the ' ' word
                     move = self.rule_declaration(filex_text[index:])
                     index += move
@@ -88,7 +88,7 @@ class Yalex():
                     #     move = self.rule_declaration(rule_text[1:])
                     #     index += move
                     #     rule_text = ''
-                elif word == 'let ':
+                elif word[-4:] == 'let ':
                     # 4 because we already read the 'let ' word
                     index += 1 # add 1 because we already read the ' ' word
                     move = self.variable_declaration(filex_text[index:])
@@ -153,6 +153,7 @@ class Yalex():
             elif (
                 line[index_to_read] is not LINE_CLOSING
                 and line[index_to_read] != ' '
+                and line[index_to_read] != '\t'
                 and not self.operators.is_operator(line[index_to_read])
                 and line[index_to_read] != "'"
                 and line[index_to_read] != '"'
@@ -323,6 +324,8 @@ class Yalex():
                 is_group = True
                 index_to_read += 1
                 yalex_var += [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
+            elif line[index_to_read] == ' ':
+                index_to_read += 1
             elif line[index_to_read] == '"':
                 string, move = self.expect_double_quote(line[index_to_read:])
                 yalex_var += string

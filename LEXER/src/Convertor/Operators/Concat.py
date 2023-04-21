@@ -1,7 +1,7 @@
 from typing import List
 from src.Convertor.Operators.Operator import Operator
-from Automata.Automata import Automata
-from Automata.EmptyToken import EmptyToken
+from src.Automata.Automata import Automata
+from src.Automata.EmptyToken import EmptyToken
 from src.Convertor.Character import Character, character_types
 from src.Convertor.Operators.Constants import CONCATENATION_SIMBOL, UNION_SIMBOL
 

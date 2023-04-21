@@ -1,4 +1,4 @@
-from Automata.Token import Token
+from src.Automata.Token import Token
 from src.Convertor.Operators.Operator import Operator
 from uuid import uuid4
 from src.Convertor.Character import character_types

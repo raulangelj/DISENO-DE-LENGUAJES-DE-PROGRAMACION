@@ -6,12 +6,12 @@ from termcolor import colored
 from src.Convertor.ConvertorAlgorithms import Algorithms
 from src.Convertor.Parser import Parser
 from src.Tree.Tree import Tree
-from Automata.DFA import DFA
+from src.Automata.DFA import DFA
 from src.Convertor.Character import *
 
 RUTE_COMPILER = 'LEXER/'
 
-compiler_content = '''from Automata.DFA import DFA
+compiler_content = '''from src.Automata.DFA import DFA
 from src.Convertor.Character import *
 import os
 import pickle

@@ -1,6 +1,6 @@
 from typing import Dict, List, TypedDict
-from Automata.State import State
-from Automata.Token import Token
+from src.Automata.State import State
+from src.Automata.Token import Token
 
 
 class Transitions():

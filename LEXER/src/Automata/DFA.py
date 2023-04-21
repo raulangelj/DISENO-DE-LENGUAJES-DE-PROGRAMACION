@@ -1,7 +1,7 @@
 from __future__ import annotations
-from Automata.Automata import Automata
-from Automata.State import State
-from Automata.Token import Token
+from src.Automata.Automata import Automata
+from src.Automata.State import State
+from src.Automata.Token import Token
 from termcolor import colored
 from typing import Dict, List, Tuple
 from src.Tree.Tree import Tree

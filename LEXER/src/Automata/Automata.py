@@ -1,10 +1,10 @@
 from __future__ import annotations
 from typing import List
 import graphviz as gv
-from Automata.State import State
-from Automata.Token import Token
-from Automata.Transitions import Transitions
-from Automata.EmptyToken import EmptyToken
+from src.Automata.State import State
+from src.Automata.Token import Token
+from src.Automata.Transitions import Transitions
+from src.Automata.EmptyToken import EmptyToken
 
 
 class Automata():

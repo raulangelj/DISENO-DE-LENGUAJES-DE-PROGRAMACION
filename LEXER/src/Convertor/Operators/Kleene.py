@@ -1,8 +1,8 @@
 from src.Convertor.Operators.Constants import KLEENE_SIMBOL, UNION_SIMBOL
 from src.Convertor.Operators.Operator import Operator
-from Automata.EmptyToken import EmptyToken
-from Automata.Automata import Automata
-from Automata.State import State
+from src.Automata.EmptyToken import EmptyToken
+from src.Automata.Automata import Automata
+from src.Automata.State import State
 from typing import List
 from src.Convertor.Character import *
 

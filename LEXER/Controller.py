@@ -1,7 +1,7 @@
 from src.Convertor.Parser import Parser
 from src.Tree.Tree import Tree
-from Automata.NFA import NFA
-from Automata.DFA import DFA
+from src.Automata.NFA import NFA
+from src.Automata.DFA import DFA
 
 class Controller():
 	def __init__(self) -> None:

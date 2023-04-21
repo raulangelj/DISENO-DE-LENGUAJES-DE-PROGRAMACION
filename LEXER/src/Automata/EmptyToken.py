@@ -1,4 +1,4 @@
-from Automata.Token import Token
+from src.Automata.Token import Token
 from src.Convertor.Operators.Constants import EMPTY_SIMBOL
 
 

@@ -1,12 +1,12 @@
 from typing import List
 from termcolor import colored
-from Automata.Automata import Automata
-from Automata.State import State
-from Automata.Transitions import Transitions
-from Automata.Token import Token
-from Automata.EmptyToken import EmptyToken
+from src.Automata.Automata import Automata
+from src.Automata.State import State
+from src.Automata.Transitions import Transitions
+from src.Automata.Token import Token
+from src.Automata.EmptyToken import EmptyToken
 from src.Convertor.Simbols import Operators
-from Automata.DFA import DFA
+from src.Automata.DFA import DFA
 
 
 class NFA(Automata):

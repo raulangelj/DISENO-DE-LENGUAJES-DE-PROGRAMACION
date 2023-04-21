@@ -3,7 +3,7 @@
   Main class to run the program
 '''
 from Controller import Controller
-from Menu.Menu import Menu
+from src.Menu.Menu import Menu
 from time import sleep
 # from simple_term_menu import TerminalMenu
 

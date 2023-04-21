@@ -16,7 +16,8 @@ class Kleene(Operator):
             'Invalid expresion: kleene can\'t be the first simbol or follow a Union/Or operator\n',
         ]
 
-    def validate(self, factors:List[Character], index):  # sourcery skip: raise-specific-error
+    # sourcery skip: raise-specific-error
+    def validate(self, factors: List[Character], index):
         # TODO: recorrer hacia adelante para ver si hay varios kleen juntos y quitarlos todos y dejar solo uno
         caracter_before = factors[-1].value if factors else ''
         if not factors or caracter_before is UNION_SIMBOL:
@@ -35,7 +36,7 @@ class Kleene(Operator):
             inside_parenthesis = len(caracter_before) > 1
             return f'{self.agrupation[0]}{self.agrupation[0] if inside_parenthesis else ""}{caracter_before}{self.agrupation[1] if inside_parenthesis else ""}{self.simbol}{self.agrupation[1]}', 1
 
-    def get_automata_rule(self, automata_1:Automata, state_counter:int) -> Automata:
+    def get_automata_rule(self, automata_1: Automata, state_counter: int) -> Automata:
         # New first state
         new_initial_state = State(is_initial=True, value=state_counter)
         state_counter += 1
@@ -48,16 +49,21 @@ class Kleene(Operator):
         # Change the final state
         automata_1.final_state.is_final = False
         # Add the states
-        new_automata.states =automata_1.states + [new_initial_state, new_final_state]
+        new_automata.states = automata_1.states + \
+            [new_initial_state, new_final_state]
         # Add the alphabet
         new_automata.add_alphabet(automata_1.alphabet + [EmptyToken()])
         # Add the transitions
         new_automata.transitions = automata_1.transitions
         # Add the new transitions
-        new_automata.transitions.add_transition(new_initial_state, EmptyToken(), automata_1.initial_state)
-        new_automata.transitions.add_transition(new_initial_state, EmptyToken(), new_final_state)
-        new_automata.transitions.add_transition(automata_1.final_state, EmptyToken(), automata_1.initial_state)
-        new_automata.transitions.add_transition(automata_1.final_state, EmptyToken(), new_final_state)
+        new_automata.transitions.add_transition(
+            new_initial_state, EmptyToken(), automata_1.initial_state)
+        new_automata.transitions.add_transition(
+            new_initial_state, EmptyToken(), new_final_state)
+        new_automata.transitions.add_transition(
+            automata_1.final_state, EmptyToken(), automata_1.initial_state)
+        new_automata.transitions.add_transition(
+            automata_1.final_state, EmptyToken(), new_final_state)
         # Set the new initial and final states
         new_automata.initial_state = new_initial_state
         new_automata.final_state = new_final_state

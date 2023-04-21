@@ -13,7 +13,7 @@ class Node():
         self.i = i
         self.uuid = str(uuid4())
         self.type = type
-        self.label = label or value 
+        self.label = label or value
         # show the str instead of the ascii
         # if len(value) == 3:
         #     self.value = chr(int(value))
@@ -21,19 +21,19 @@ class Node():
         #     self.value = chr(int(value[:3])) + chr(int(value[3:]))
         # else:
         #     self.value = value
-    
+
     def nullable(self) -> bool:
         if self.value == self.operator.empty_simbol:
             return True
         elif self.value == self.operator.kleene_simbol:
             return True
         elif self.value == self.operator.concatenation_simbol:
-           return self.left.nullable() and self.right.nullable()
+            return self.left.nullable() and self.right.nullable()
         elif self.value == self.operator.union_simbol:
             return self.left.nullable() or self.right.nullable()
         else:
             return False
-        
+
     def firstpos(self) -> list:
         if self.value == self.operator.empty_simbol:
             return []
@@ -48,7 +48,7 @@ class Node():
             return self.left.firstpos() + self.right.firstpos()
         else:
             return [self.i]
-    
+
     def lastpos(self) -> list:
         if self.value == self.operator.empty_simbol:
             return []

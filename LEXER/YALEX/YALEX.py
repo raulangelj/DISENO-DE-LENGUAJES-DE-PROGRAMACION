@@ -7,12 +7,12 @@ LINE_CLOSING = '\n'
 OPEN_COMMENT = '(*'
 CLOSE_COMMENT = '*)'
 
+
 class ReturnModel():
     def __init__(self) -> None:
         self.token_id = ''
         self.value = ''
         self.leave_index = -1
-
 
 
 class Yalex():
@@ -78,7 +78,7 @@ class Yalex():
                     reading_comment = True
                     actual_comment += char
                 elif word[-5:] == 'rule ' or reading_rule:
-                    index += 1 # add 1 because we already read the ' ' word
+                    index += 1  # add 1 because we already read the ' ' word
                     move = self.rule_declaration(filex_text[index:])
                     index += move
                     word = ''
@@ -91,7 +91,7 @@ class Yalex():
                     #     rule_text = ''
                 elif word[-4:] == 'let ':
                     # 4 because we already read the 'let ' word
-                    index += 1 # add 1 because we already read the ' ' word
+                    index += 1  # add 1 because we already read the ' ' word
                     move = self.variable_declaration(filex_text[index:])
                     index += move
                     word = ''
@@ -117,7 +117,8 @@ class Yalex():
         index_to_read += 2  # 2 because we already read the '= ' word
         rule_value = {}
         rule_returns = {}
-        rules = [] # arreglo con la estructura de { token_id: 'token_name', value: 'token_value'}
+        # arreglo con la estructura de { token_id: 'token_name', value: 'token_value'}
+        rules = []
         reading_return = False
         reading_comment = False
         actual_comment = ''
@@ -210,15 +211,18 @@ class Yalex():
             raise Exception(f'Rule "{wrong_ids[-1]}" not found')
         self.rules = rules
         self.rule_returns = rule_returns
-        rule_value_array = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
+        rule_value_array = [
+            Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
         for value in rule_value.values():
             # rule_value_string += f'({value})|'
-            rule_value_array += [value, Character(value='#', type=character_types.FINAL), Character(value=self.operators.or_op.simbol, type=character_types.OPERATOR)]
+            rule_value_array += [value, Character(value='#', type=character_types.FINAL), Character(
+                value=self.operators.or_op.simbol, type=character_types.OPERATOR)]
         # rule_value_string = f'{rule_value_string[:-1]})'
-        rule_value_array = rule_value_array[:-1] + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+        rule_value_array = rule_value_array[:-1] + [
+            Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
         self.rule = self.flatten(rule_value_array)
         return index_to_read
-    
+
     def validate_rule(self, rule_value: dict[str, List[Character]]):
         if values_empty := [
             key for key, value in rule_value.items() if len(value) == 0
@@ -239,7 +243,7 @@ class Yalex():
                 variable_name += line[index_to_read]
                 index_to_read += 1
         # find the variable value
-        index_to_read += 3 # 3 because we already read the ' = ' word
+        index_to_read += 3  # 3 because we already read the ' = ' word
         yalex_var, move = self.expect_yalex_var(
             line[index_to_read:])
         index_to_read += move
@@ -257,7 +261,7 @@ class Yalex():
         #     else:
         #         variable_value += line[index_to_read]
         #         index_to_read += 1
-    
+
     def flatten(self, lst):
         result = []
         for item in lst:
@@ -298,11 +302,11 @@ class Yalex():
                 result += [variable[i]]
             elif not self.operators.concat.is_simbol(val) and not self.operators.concat.is_simbol(next_val):
                 # result += f'{variable[i]}|'
-                result += [variable[i], Character(value='|', type=character_types.OPERATOR)]
+                result += [variable[i],
+                           Character(value='|', type=character_types.OPERATOR)]
             else:
                 result += [variable[i]]
         return result
-
 
     def return_variable(self, variable_name: str) -> str:
         if variable_name in self.variables:
@@ -336,13 +340,16 @@ class Yalex():
             elif line[index_to_read] == ']':
                 is_group = False
                 index_to_read += 1
-                yalex_var += [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
-                yalex_var[index_to_start_convert:] = self.convert_to_expression(yalex_var[index_to_start_convert:])
+                yalex_var += [Character(value=self.operators.agrupation[1],
+                                        type=character_types.AGRUPATION)]
+                yalex_var[index_to_start_convert:] = self.convert_to_expression(
+                    yalex_var[index_to_start_convert:])
             elif line[index_to_read] == '[':
                 index_to_start_convert = index_to_read
                 is_group = True
                 index_to_read += 1
-                yalex_var += [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
+                yalex_var += [Character(value=self.operators.agrupation[0],
+                                        type=character_types.AGRUPATION)]
             elif line[index_to_read] == ' ':
                 index_to_read += 1
             elif line[index_to_read] == '"':
@@ -368,12 +375,14 @@ class Yalex():
                         yalex_var = []
                         index_to_read += 1
                         continue
-                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + variable_value + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + variable_value + [
+                        Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
                     yalex_var += variable
                     var_name = ''
                     var_name_move += len(var_name)
                     # convert = False
-                yalex_var += [Character(value=line[index_to_read], type=character_types.AGRUPATION)]
+                yalex_var += [Character(value=line[index_to_read],
+                                        type=character_types.AGRUPATION)]
                 index_to_read += 1 + var_name_move
                 reading_token = False
             elif self.operators.is_operator(line[index_to_read]):
@@ -385,12 +394,14 @@ class Yalex():
                         yalex_var = []
                         index_to_read += 1
                         continue
-                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + variable_value + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + variable_value + [
+                        Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
                     yalex_var += variable
                     var_name = ''
                     var_name_move += len(var_name)
                     # convert = False
-                yalex_var += [Character(value=line[index_to_read], type=character_types.OPERATOR)]
+                yalex_var += [Character(value=line[index_to_read],
+                                        type=character_types.OPERATOR)]
                 reading_token = False
                 index_to_read += 1 + var_name_move
             else:
@@ -429,7 +440,8 @@ class Yalex():
                 regular_char = line[1]
                 simbol_type = character_types.SPECIAL_CHAR
         # ascii_char = str(ord(regular_char[0])).zfill(3) + str(ord(regular_char[1])).zfill(3)
-        char = Character(value=ascii_char, type=simbol_type, label=regular_char)
+        char = Character(value=ascii_char, type=simbol_type,
+                         label=regular_char)
         return char, len(regular_char) + 1
         # keep_reading = True
         # index_to_read = 1
@@ -455,7 +467,8 @@ class Yalex():
             if line[index_to_read] == '"':
                 keep_reading = False
             else:
-                char, move = self.expect_single_quote(f"'{line[index_to_read:]}")
+                char, move = self.expect_single_quote(
+                    f"'{line[index_to_read:]}")
                 string_character += [char]
                 index_to_read += move - 1
                 # string_character.append(line[index_to_read])

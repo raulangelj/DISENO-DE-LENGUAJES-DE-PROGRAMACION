@@ -27,5 +27,6 @@ class Transitions():
     def print_transitions(self) -> None:
         print('+---------- Transitions ----------+')
         for transition in self.transitions:
-            print(f'{transition[0].value} --{transition[1].value}--> {transition[2].value}')
+            print(
+                f'{transition[0].value} --{transition[1].value}--> {transition[2].value}')
         print('+---------------------------------+')

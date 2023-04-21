@@ -5,6 +5,7 @@ from typing import Dict, List
 from YALEX.YALEX import ReturnModel
 import graphviz as gv
 
+
 class Tree():
     def __init__(self, postfix: List[Character], rules: List[ReturnModel] = None):
         if rules is None:
@@ -41,7 +42,8 @@ class Tree():
                 z.left = left
                 stack.append(z)
             else:
-                stack.append(Node(value=caracter, i=self.i_counter, type=simbol.type, label=simbol.label))
+                stack.append(Node(value=caracter, i=self.i_counter,
+                             type=simbol.type, label=simbol.label))
                 if caracter not in self.language and caracter != self.parser.operators.optional.empty_simbol and caracter != '#':
                     self.language.append(caracter)
                 if caracter == '#':
@@ -53,12 +55,11 @@ class Tree():
         self.tree = stack.pop()
         # print(self.tree.value)
         # self.inorder(self.tree)
-    
+
     def find_final_state_data(self, leave_id: int) -> ReturnModel:
         return next(
             (rule for rule in self.rules if rule.leave_index == leave_id), None
         )
-
 
     def inorder(self, x):
         if not x:
@@ -76,12 +77,14 @@ class Tree():
 
     def render_tree(self, x):
         if x.left:
-            label = x.left.value + '\n' + x.left.label if x.left.type == character_types.SIMBOL else x.left.value 
+            label = x.left.value + '\n' + \
+                x.left.label if x.left.type == character_types.SIMBOL else x.left.value
             self.dot.node(x.left.uuid, label)
             self.dot.edge(x.uuid, x.left.uuid)
             self.render_tree(x.left)
         if x.right:
-            label = x.right.value + '\n' + x.right.label if x.right.type == character_types.SIMBOL else x.right.value
+            label = x.right.value + '\n' + \
+                x.right.label if x.right.type == character_types.SIMBOL else x.right.value
             self.dot.node(x.right.uuid, label)
             self.dot.edge(x.uuid, x.right.uuid)
             self.render_tree(x.right)
@@ -89,8 +92,7 @@ class Tree():
             label = x.label + '\n' + x.label if x.type == character_types.SIMBOL else x.value
             self.dot.node(x.uuid, label)
             self.dot.render('LEXER/output/tree.gv', view=True)
-        
-    
+
     def followpos_recursive(self, x: Node):
         if not x:
             return
@@ -112,7 +114,7 @@ class Tree():
 
     def followpos(self) -> None:
         followpos = {}
-        # iterate my tree 
+        # iterate my tree
 
     def get_postfix(self) -> str:
         return ''.join(character.label for character in self.postfix)

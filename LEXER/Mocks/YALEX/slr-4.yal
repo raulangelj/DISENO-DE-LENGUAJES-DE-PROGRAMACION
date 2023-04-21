@@ -13,17 +13,17 @@ let number = digits('.'digits)?('E'['+''-']?digits)?
 
 rule tokens = 
     ws
-  | id        { return ID }               (* Cambie por una acción válida, que devuelva el token *)
-  | number    { return NUMBER }
-  | ';'       { return SEMICOLON }
-  | ":="      { return ASSIGNOP }
-  | '<'       { return LT }
-  | '='       { return EQ }
-  | '+'       { return PLUS }
-  | '-'       { return MINUS }
-  | '*'       { return TIMES }
-  | '/'       { return DIV }
-  | '('       { return LPAREN }
-  | ')'       { return RPAREN }
+  | id        { print('ID') }               (* Cambie por una acción válida, que devuelva el token *)
+  | number    { print('NUMBER') }
+  | ';'       { print('SEMICOLON') }
+  | ":="      { print('ASSIGNOP') }
+  | '<'       { print('LT') }
+  | '='       { print('EQ') }
+  | '+'       { print('PLUS') }
+  | '-'       { print('MINUS') }
+  | '*'       { print('TIMES') }
+  | '/'       { print('DIV') }
+  | '('       { print('LPAREN') }
+  | ')'       { print('RPAREN') }
 
 (* Introducir cualquier trailer aqui *)

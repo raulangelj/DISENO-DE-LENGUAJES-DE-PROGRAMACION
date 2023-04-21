@@ -1,12 +1,12 @@
 from termcolor import colored
-from Convertor.ConvertorAlgorithms import Algorithms
-from Convertor.Simbols import Operators
-from Convertor.Character import *
+from src.Convertor.ConvertorAlgorithms import Algorithms
+from src.Convertor.Simbols import Operators
+from src.Convertor.Character import *
 from typing import List
 
 
 '''
-    Convertor.py
+    src.Convertor.py
     Class to convert the infix expression to postfix
 '''
 

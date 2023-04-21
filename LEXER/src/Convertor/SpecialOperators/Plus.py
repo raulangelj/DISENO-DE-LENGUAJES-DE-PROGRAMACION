@@ -1,6 +1,6 @@
-from Convertor.Operators.Operator import Operator
-from Convertor.Operators.Constants import PLUS_SIMBOL
-from Convertor.Character import *
+from src.Convertor.Operators.Operator import Operator
+from src.Convertor.Operators.Constants import PLUS_SIMBOL
+from src.Convertor.Character import *
 from typing import List
 
 

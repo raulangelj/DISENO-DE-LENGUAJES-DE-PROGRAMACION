@@ -1,6 +1,6 @@
-from Convertor.Character import Character, character_types
+from src.Convertor.Character import Character, character_types
 from src.Tree.Node import Node
-from Convertor.Parser import Parser
+from src.Convertor.Parser import Parser
 from typing import Dict, List
 from src.YALEX.YALEX import ReturnModel
 import graphviz as gv

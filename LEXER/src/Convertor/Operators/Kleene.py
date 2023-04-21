@@ -1,10 +1,10 @@
-from Convertor.Operators.Constants import KLEENE_SIMBOL, UNION_SIMBOL
-from Convertor.Operators.Operator import Operator
+from src.Convertor.Operators.Constants import KLEENE_SIMBOL, UNION_SIMBOL
+from src.Convertor.Operators.Operator import Operator
 from Automata.EmptyToken import EmptyToken
 from Automata.Automata import Automata
 from Automata.State import State
 from typing import List
-from Convertor.Character import *
+from src.Convertor.Character import *
 
 
 class Kleene(Operator):

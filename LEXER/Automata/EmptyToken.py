@@ -1,5 +1,5 @@
 from Automata.Token import Token
-from Convertor.Operators.Constants import EMPTY_SIMBOL
+from src.Convertor.Operators.Constants import EMPTY_SIMBOL
 
 
 class EmptyToken(Token):

@@ -1,9 +1,9 @@
 from typing import List
-from Convertor.Operators.Operator import Operator
+from src.Convertor.Operators.Operator import Operator
 from Automata.Automata import Automata
 from Automata.EmptyToken import EmptyToken
-from Convertor.Character import Character, character_types
-from Convertor.Operators.Constants import CONCATENATION_SIMBOL, UNION_SIMBOL
+from src.Convertor.Character import Character, character_types
+from src.Convertor.Operators.Constants import CONCATENATION_SIMBOL, UNION_SIMBOL
 
 
 class Concat(Operator):

@@ -5,7 +5,7 @@ from Automata.State import State
 from Automata.Transitions import Transitions
 from Automata.Token import Token
 from Automata.EmptyToken import EmptyToken
-from Convertor.Simbols import Operators
+from src.Convertor.Simbols import Operators
 from Automata.DFA import DFA
 
 

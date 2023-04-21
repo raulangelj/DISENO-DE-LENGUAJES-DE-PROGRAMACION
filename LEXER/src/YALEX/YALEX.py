@@ -1,6 +1,6 @@
 from typing import List, Tuple
-from Convertor.Simbols import Operators
-from Convertor.Character import Character, character_types, Characters
+from src.Convertor.Simbols import Operators
+from src.Convertor.Character import Character, character_types, Characters
 from termcolor import colored
 
 LINE_CLOSING = '\n'

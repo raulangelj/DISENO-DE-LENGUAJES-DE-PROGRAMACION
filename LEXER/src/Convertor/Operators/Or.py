@@ -1,5 +1,5 @@
-from Convertor.Operators.Constants import UNION_SIMBOL, KLEENE_SIMBOL, PLUS_SIMBOL, OPTIONAL_SIMBOL
-from Convertor.Operators.Operator import Operator
+from src.Convertor.Operators.Constants import UNION_SIMBOL, KLEENE_SIMBOL, PLUS_SIMBOL, OPTIONAL_SIMBOL
+from src.Convertor.Operators.Operator import Operator
 from Automata.Automata import Automata
 from Automata.EmptyToken import EmptyToken
 from Automata.State import State

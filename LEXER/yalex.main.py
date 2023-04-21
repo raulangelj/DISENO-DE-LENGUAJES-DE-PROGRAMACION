@@ -3,16 +3,16 @@ import glob
 import pickle
 from src.YALEX.YALEX import Yalex
 from termcolor import colored
-from Convertor.ConvertorAlgorithms import Algorithms
-from Convertor.Parser import Parser
+from src.Convertor.ConvertorAlgorithms import Algorithms
+from src.Convertor.Parser import Parser
 from src.Tree.Tree import Tree
 from Automata.DFA import DFA
-from Convertor.Character import *
+from src.Convertor.Character import *
 
 RUTE_COMPILER = 'LEXER/'
 
 compiler_content = '''from Automata.DFA import DFA
-from Convertor.Character import *
+from src.Convertor.Character import *
 import os
 import pickle
 

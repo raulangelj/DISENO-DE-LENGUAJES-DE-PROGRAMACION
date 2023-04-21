@@ -1,10 +1,10 @@
 from collections import Counter
-from Convertor.Operators.Kleene import Kleene
-from Convertor.Operators.Concat import Concat
-from Convertor.Operators.Or import Or
-from Convertor.SpecialOperators.Optional import Optional
-from Convertor.SpecialOperators.Plus import Plus
-from Convertor.Character import character_types, Character
+from src.Convertor.Operators.Kleene import Kleene
+from src.Convertor.Operators.Concat import Concat
+from src.Convertor.Operators.Or import Or
+from src.Convertor.SpecialOperators.Optional import Optional
+from src.Convertor.SpecialOperators.Plus import Plus
+from src.Convertor.Character import character_types, Character
 from typing import List
 
 

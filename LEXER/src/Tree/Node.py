@@ -1,7 +1,7 @@
 from Automata.Token import Token
-from Convertor.Operators.Operator import Operator
+from src.Convertor.Operators.Operator import Operator
 from uuid import uuid4
-from Convertor.Character import character_types
+from src.Convertor.Character import character_types
 
 
 class Node():

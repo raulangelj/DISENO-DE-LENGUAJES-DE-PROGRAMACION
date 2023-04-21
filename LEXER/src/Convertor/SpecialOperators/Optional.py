@@ -1,7 +1,7 @@
-from Convertor.Operators.Operator import Operator
-from Convertor.Operators.Constants import OPTIONAL_SIMBOL, UNION_SIMBOL
-from Convertor.Operators.Or import Or
-from Convertor.Character import *
+from src.Convertor.Operators.Operator import Operator
+from src.Convertor.Operators.Constants import OPTIONAL_SIMBOL, UNION_SIMBOL
+from src.Convertor.Operators.Or import Or
+from src.Convertor.Character import *
 from typing import List, Tuple
 
 

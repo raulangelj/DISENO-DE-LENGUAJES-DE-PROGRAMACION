@@ -1,6 +1,6 @@
 from typing import List
-from Convertor.Simbols import Operators
-from Convertor.Character import Character
+from src.Convertor.Simbols import Operators
+from src.Convertor.Character import Character
 
 '''
 	Class to implement the algorithms to convert

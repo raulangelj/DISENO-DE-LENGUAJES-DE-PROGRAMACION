@@ -6,7 +6,7 @@ from termcolor import colored
 from typing import Dict, List, Tuple
 from src.Tree.Tree import Tree
 from itertools import combinations
-from Convertor.Character import Characters
+from src.Convertor.Character import Characters
 from enum import Enum
 
 class type_token:

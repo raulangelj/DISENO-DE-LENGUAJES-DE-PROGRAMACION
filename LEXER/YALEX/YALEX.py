@@ -183,7 +183,7 @@ class Yalex():
                 var_name = ''
             elif line[index_to_read] == self.operators.or_op.simbol:
                 # encontro el or
-                value_ = rule_returns[last_var_name] if last_var_name in rule_returns else 'RETURN_NOT_FOUND'
+                value_ = rule_returns[last_var_name] if last_var_name in rule_returns else ''
                 token = ReturnModel()
                 token.token_id = last_var_name
                 token.value = value_

@@ -7,12 +7,20 @@ from typing import Dict, List, Tuple
 from Tree.Tree import Tree
 from itertools import combinations
 from Convertor.Character import Characters
+from enum import Enum
+
+class type_token:
+    TOKEN = 'TOKEN'
+    NOT_VALID = 'NOT_VALID'
+
+type_token = Enum('type_token', ['NOT_VALID', 'TOKEN'])
 
 
 class tokenListModel():
     def __init__(self):
         self.characters: Characters = []
         self.accepted_state: State | None = None
+        self.token_type = type_token.TOKEN
 
 
 class DFA(Automata):
@@ -46,6 +54,7 @@ class DFA(Automata):
                 tokenList.characters = Characters(
                     characters_list=word[:last_accepted_index - start_word_index + 1])
                 tokenList.accepted_state = last_accepted
+                tokenList.token_type = type_token.TOKEN
                 token_list.append(tokenList)
                 word = []
                 current_states = [self.initial_state]
@@ -57,9 +66,9 @@ class DFA(Automata):
                 tokenList = tokenListModel()
                 tokenList.characters = Characters()
                 tokenList.characters.characters = [caracter]
-                not_valid_state = State(value='NOT_VALID', is_final=True, return_value=Token(
-                    value='NOT_VALID', label='NOT_VALID'))
+                not_valid_state = State(value='NOT_VALID', is_final=True)
                 tokenList.accepted_state = not_valid_state
+                tokenList.token_type = type_token.NOT_VALID
                 token_list.append(tokenList)
                 word = []
                 current_states = [self.initial_state]
@@ -77,8 +86,8 @@ class DFA(Automata):
             tokenList.accepted_state = last_accepted
             token_list.append(tokenList)
         # print the token list characters with the retunr value of the last accepted state
-        for token in token_list:
-            print(token.characters, ':', token.accepted_state.return_value.value)
+        # for token in token_list:
+        #     print(token.characters, ':', token.accepted_state.return_value.value)
         return token_list
 
         # is_valid = any(state.is_final for state in current_states)

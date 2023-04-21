@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from Convertor.Simbols import Operators
-from Convertor.Character import Character, character_types
+from Convertor.Character import Character, character_types, Characters
 from termcolor import colored
 
 LINE_CLOSING = '\n'
@@ -416,14 +416,20 @@ class Yalex():
     def expect_single_quote(self, line: str) -> str:
         ascii_char = str(ord(line[1])).zfill(3)
         regular_char = line[1]
+        simbol_type = character_types.SIMBOL
         # if regular_char == '\\':
         #     regular_char += line[2]
         #     ascii_char += str(ord(line[2])).zfill(3)
         if regular_char == '\\':
             regular_char = line[1] + line[2]
-            ascii_char = str(self.escape_characters[regular_char]).zfill(3)
+            if regular_char in self.escape_characters:
+                ascii_char = str(self.escape_characters[regular_char]).zfill(3)
+            else:
+                ascii_char = str(ord(line[1])).zfill(3)
+                regular_char = line[1]
+                simbol_type = character_types.SPECIAL_CHAR
         # ascii_char = str(ord(regular_char[0])).zfill(3) + str(ord(regular_char[1])).zfill(3)
-        char = Character(value=ascii_char, type=character_types.SIMBOL, label=regular_char)
+        char = Character(value=ascii_char, type=simbol_type, label=regular_char)
         return char, len(regular_char) + 1
         # keep_reading = True
         # index_to_read = 1

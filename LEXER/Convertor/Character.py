@@ -16,10 +16,11 @@ class character_types():
     AGRUPATION = 'AGRUPATION'
     FINAL = 'FINAL'
     EMPTY = 'EMPTY'
+    SPECIAL_CHAR = 'SPECIAL_CHAR'
 
 
 character_types = Enum('character_types', [
-                       'SIMBOL', 'OPERATOR', 'AGRUPATION', 'FINAL', 'EMPTY'])
+                       'SIMBOL', 'OPERATOR', 'AGRUPATION', 'FINAL', 'EMPTY', 'SPECIAL_CHAR'])
 
 
 class Character():

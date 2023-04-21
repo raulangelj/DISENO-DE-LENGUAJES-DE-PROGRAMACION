@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Tuple
 from Convertor.Simbols import Operators
 from Convertor.Character import Character, character_types
+from termcolor import colored
 
 LINE_CLOSING = '\n'
 OPEN_COMMENT = '(*'
@@ -202,6 +203,11 @@ class Yalex():
             elif var_name != '' and line[index_to_read] == self.operators.or_op.simbol:
                 raise Exception(f'Variable "{var_name}" not found')
             index_to_read += 1
+        succes, wrong_ids = self.validate_rule(rule_value)
+        if not succes:
+            for wrong_id in wrong_ids[-2]:
+                print(colored(f'Rule "{wrong_id}" not found', 'red'))
+            raise Exception(f'Rule "{wrong_ids[-1]}" not found')
         self.rules = rules
         self.rule_returns = rule_returns
         rule_value_array = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)]
@@ -212,6 +218,13 @@ class Yalex():
         rule_value_array = rule_value_array[:-1] + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
         self.rule = self.flatten(rule_value_array)
         return index_to_read
+    
+    def validate_rule(self, rule_value: dict[str, List[Character]]):
+        if values_empty := [
+            key for key, value in rule_value.items() if len(value) == 0
+        ]:
+            return (False, values_empty)
+        return (True, [])
 
     def variable_declaration(self, line: str) -> None:
         keep_reading = True
@@ -295,7 +308,9 @@ class Yalex():
         if variable_name in self.variables:
             return self.variables[variable_name]
         else:
-            raise Exception(f'Variable "{variable_name}" not found')
+            # raise Exception(f'Variable "{variable_name}" not found')
+            print(colored(f'Variable "{variable_name}" not found', 'red'))
+            return None
 
     def expect_yalex_var(self, line: str) -> str:
         keep_reading = True
@@ -304,6 +319,7 @@ class Yalex():
         var_name = ''
         # convert = True
         is_group = False
+        error_in_definition = False
         reading_token = False
         index_to_start_convert = None
         while keep_reading:
@@ -314,6 +330,9 @@ class Yalex():
             #     convert = False
             if index_to_read >= len(line) or line[index_to_read] in [LINE_CLOSING]:
                 keep_reading = False
+            elif error_in_definition:
+                index_to_read += 1
+                pass
             elif line[index_to_read] == ']':
                 is_group = False
                 index_to_read += 1
@@ -343,7 +362,13 @@ class Yalex():
             elif self.operators.is_agrupation(line[index_to_read]):
                 var_name_move = 0
                 if reading_token:
-                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + self.return_variable(var_name) + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+                    variable_value = self.return_variable(var_name)
+                    if variable_value is None:
+                        error_in_definition = True
+                        yalex_var = []
+                        index_to_read += 1
+                        continue
+                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + variable_value + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
                     yalex_var += variable
                     var_name = ''
                     var_name_move += len(var_name)
@@ -354,7 +379,13 @@ class Yalex():
             elif self.operators.is_operator(line[index_to_read]):
                 var_name_move = 0
                 if reading_token:
-                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + self.return_variable(var_name) + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
+                    variable_value = self.return_variable(var_name)
+                    if variable_value is None:
+                        error_in_definition = True
+                        yalex_var = []
+                        index_to_read += 1
+                        continue
+                    variable = [Character(value=self.operators.agrupation[0], type=character_types.AGRUPATION)] + variable_value + [Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
                     yalex_var += variable
                     var_name = ''
                     var_name_move += len(var_name)

@@ -1,7 +1,7 @@
 import os
 import glob
 import pickle
-from YALEX.YALEX import Yalex
+from src.YALEX.YALEX import Yalex
 from termcolor import colored
 from Convertor.ConvertorAlgorithms import Algorithms
 from Convertor.Parser import Parser

@@ -6,3 +6,5 @@ Automata_GRAPH/
 build/
 dist/
 output/
+LEXER/*.pkl
+scanner.py

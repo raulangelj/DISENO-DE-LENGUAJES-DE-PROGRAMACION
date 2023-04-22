@@ -1,7 +1,7 @@
 	let delim = [' ''\t''\n']
  let ws = delim+ 
 let letter = ['A'-'Z''a'-'z']
-let digit = ["0123456789"]
+lets digit = ["0123456789"]
    let id = letter(letter | digit)*
 	 let num = digit+
 
@@ -26,4 +26,7 @@ rule tokens =
   	| ')'       { return RPAREN }
 	| "*)"		 { return STARTCOMMENT }
 
-(* Introducir cualquier trailer aqui *)
+(* 
+if True:
+	print('Esto es desde eĺ trailer')
+ *)

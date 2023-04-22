@@ -1,6 +1,8 @@
-(* Lexer para Gramática No. 4 *)
+(* from TOKENS import *
+from CONSTANTES_SCANNER import * *)
 
-(* Introducir cualquier header aqui *)
+(* Lexer para Gramática No. 4 ESTE USA EL ARCHIVO ESTRA LLAMADO: 
+CONSTANTES_SCANNER.py*)
 
 let delim = [' ''\t''\n']
 let ws = delim+
@@ -13,7 +15,7 @@ let number = digits('.'digits)?('E'['+''-']?digits)?
 
 rule tokens = 
     ws
-  | id        { print('ID') }               (* Cambie por una acción válida, que devuelva el token *)
+  | id        { print(AAA) }               (* Cambie por una acción válida, que devuelva el token *)
   | number    { print('NUMBER') }
   | ';'       { print('SEMICOLON') }
   | ":="      { print('ASSIGNOP') }
@@ -26,4 +28,7 @@ rule tokens =
   | '('       { print('LPAREN') }
   | ')'       { print('RPAREN') }
 
-(* Introducir cualquier trailer aqui *)
+(* 
+if True:
+	print('Esto es desde eĺ trailer')
+ *)

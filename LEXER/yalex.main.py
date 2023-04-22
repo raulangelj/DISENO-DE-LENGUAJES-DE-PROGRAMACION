@@ -16,29 +16,26 @@ from src.Convertor.Character import *
 import os
 import pickle
 
-def main():
-    file_path = input('Ingrese la ruta del archivo: ')
-    file_data = ''
-    with open(file_path, 'r') as file:
-        for line in file:
-            for character in line:
-                file_data += character
-    tokens = None
-    with open('LEXER/automata.pkl', 'rb') as file:
-        automata = pickle.load(file)
-        sentence = Characters(file_data)
-        tokens = automata.simulate(sentence)
-    for token in tokens:
-        if token.token_type.value != 1:
-            return_val = token.accepted_state.return_value.value[1:-1].strip() if token.accepted_state.return_value else ''
-            exec(return_val)
-        else:
-            print(f'TOKEN NO VALIDO: {token.characters}')
-if __name__ == '__main__':
-    main()
+file_path = input('Ingrese la ruta del archivo: ')
+file_data = ''
+with open(file_path, 'r') as file:
+    for line in file:
+        for character in line:
+            file_data += character
+tokens = None
+with open('LEXER/automata.pkl', 'rb') as file:
+    automata = pickle.load(file)
+    sentence = Characters(file_data)
+    tokens = automata.simulate(sentence)
+for token in tokens:
+    if token.token_type.value != 1:
+        return_val = token.accepted_state.return_value.value[1:-1].strip() if token.accepted_state.return_value else ''
+        exec(return_val)
+    else:
+        print(f'TOKEN NO VALIDO: {token.characters}')
 '''
 
-def create_scanner():
+def create_scanner(header:str = '', trailer: str = ''):
     # # create the deps files
     # directories = ['LEXER/Automata', 'LEXER/Convertor', 'LEXER/Tree', 'LEXER/YALEX']
     # # directories = ['LEXER/Tree', 'LEXER/YALEX']
@@ -63,7 +60,9 @@ def create_scanner():
     if not os.path.exists(RUTE_COMPILER):
         os.makedirs(RUTE_COMPILER)
     with open(f'{RUTE_COMPILER}scanner.py', 'w') as file:
-        file.write(compiler_content)
+        header_value = header[2:-2].strip() if header else ''
+        trailer_value = trailer[2:-2].strip() if trailer else ''
+        file.write(header_value + '\n' + compiler_content + '\n' + trailer_value)
     # run the file created
     # os.system(f'python {RUTE_COMPILER}scanner.py')
 
@@ -77,10 +76,12 @@ def main():
         if option == '1':
             try:
                 # file_path = input('Ingrese la ruta del archivo: ')
-                file_path = 'LEXER/Mocks/YALEX/slr-4.yal'
+                file_path = 'LEXER/Mocks/YALEX/slr-0.yal'
                 algorithms = Algorithms()
                 yalex = Yalex(file_path)
                 yalex.read_file()
+                header = yalex.comments[0].strip()
+                trailer = yalex.comments[-1].strip()
                 postfix = algorithms.get_result_postfix(yalex.expression)
                 tree = Tree(postfix=postfix)
                 tree.create_tree()
@@ -106,7 +107,7 @@ def main():
                 with open(f'{RUTE_COMPILER}automata.pkl', 'wb') as file:
                     pickle.dump(adf, file)
 
-                create_scanner()
+                create_scanner(header, trailer)
                 # text_to_analyze = ''
                 # # open file cualquiera.txt that is in the same folder as this file
                 # with open('LEXER/cualquiera.txt', 'r') as file:

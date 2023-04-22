@@ -37,6 +37,7 @@ class Yalex():
 
     def read_file(self) -> None:
         filex_text = ''
+        self.valid = True
         with open(self.file_to_read, 'r') as file:
             # TODO: quitar breaks y hacerlo con index y las funciones me van a regresar cuantos me movi
             for line in file:
@@ -61,9 +62,24 @@ class Yalex():
         reading_rule = False
         actual_comment = ''
         reading_comment = False
+        reading_header = False
         while keep_reading:
             if index > len(filex_text) - 1:
                 keep_reading = False
+            elif filex_text[index] == CLOSE_COMMENT[0] and filex_text[index + 1] == CLOSE_COMMENT[1]:
+                # to read the first comment as header
+                char = filex_text[index]
+                actual_comment += char + filex_text[index + 1]
+                index += 1
+                self.comments.append(actual_comment)
+                reading_header = False
+                actual_comment = ''
+                word = ''
+            elif (filex_text[index] == OPEN_COMMENT[0] and filex_text[index + 1] == OPEN_COMMENT[1]) or reading_header:
+                # to read the first comment as header
+                char = filex_text[index]
+                reading_header = True
+                actual_comment += char
             elif filex_text[index] != LINE_CLOSING:
                 char = filex_text[index]
                 word += filex_text[index]
@@ -205,10 +221,14 @@ class Yalex():
                 raise Exception(f'Variable "{var_name}" not found')
             index_to_read += 1
         succes, wrong_ids = self.validate_rule(rule_value)
+        # TODO pasar esto a una funcion aparte
         if not succes:
-            for wrong_id in wrong_ids[-2]:
-                print(colored(f'Rule "{wrong_id}" not found', 'red'))
+            if len(wrong_ids) > 1:
+                for wrong_id in wrong_ids[:-1]:
+                    print(colored(f'Rule "{wrong_id}" not found', 'red'))
             raise Exception(f'Rule "{wrong_ids[-1]}" not found')
+        if not self.valid:
+            raise Exception('ERROR IN YAL FILE')
         self.rules = rules
         self.rule_returns = rule_returns
         rule_value_array = [
@@ -221,7 +241,7 @@ class Yalex():
         rule_value_array = rule_value_array[:-1] + [
             Character(value=self.operators.agrupation[1], type=character_types.AGRUPATION)]
         self.rule = self.flatten(rule_value_array)
-        return index_to_read
+        return index_to_read - 1
 
     def validate_rule(self, rule_value: dict[str, List[Character]]):
         if values_empty := [
@@ -314,6 +334,7 @@ class Yalex():
         else:
             # raise Exception(f'Variable "{variable_name}" not found')
             print(colored(f'Variable "{variable_name}" not found', 'red'))
+            self.valid = False
             return None
 
     def expect_yalex_var(self, line: str) -> str:

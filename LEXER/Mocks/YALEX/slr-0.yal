@@ -1,17 +1,12 @@
 	let delim = [' ''\t''\n']
  let ws = delim+ 
 let letter = ['A'-'Z''a'-'z']
-lets digit = ["0123456789"]
-   let id = letter(letter | digit)*
-	 let num = digit+
+
+let digit = ["0123456789"]
+   let id = letter (letter | digit)*
 
 rule tokens = 
     ws  {return NONE}
-	| num { 
-		let t = lexeme
-		if t.value > 32767: return NUM
-		else: return NONE
-	}
   
 	| id  {  
 				if t.value = 0: return ID
@@ -20,13 +15,10 @@ rule tokens =
 
 	}         (* Cambie por una acción válida, que devuelva el token *)
   
-	| '+'       { print('hola') }
+	| '+'       { return PLUS }
   	| '*'       { return TIMES }
   	| '('       { return LPAREN }
   	| ')'       { return RPAREN }
 	| "*)"		 { return STARTCOMMENT }
 
-(* 
-if True:
-	print('Esto es desde eĺ trailer')
- *)
+(* Introducir cualquier trailer aqui *)

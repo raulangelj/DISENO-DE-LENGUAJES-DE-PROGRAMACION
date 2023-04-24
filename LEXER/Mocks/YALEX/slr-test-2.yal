@@ -1,0 +1,19 @@
+(*
+PLUS = "PLUS"
+*)
+	let delim = [' ''\t''\n']
+ let ws = delim+
+let letter = ['A'-'J''a'-'j']
+let if = "if"
+let else = "else"
+let digit = ["0123456789"]
+   let id = letter (letter | digit)*
+
+rule tokens =
+    ws  {print('NONE')}
+    | else  { print('ELSE SOY YO') }
+	| id  { print('ID') }
+    | if    { print('IF SOY YO') }
+
+(* Introducir cualquier trailer aqui *)
+(*print('eof')*)

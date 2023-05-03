@@ -15,6 +15,7 @@ let number = digits('.'digits)?('E'['+''-']?digits)?
 
 rule tokens = 
     ws
+  | "if"     { print('IF') }
   | id        { print(AAA) }               (* Cambie por una acción válida, que devuelva el token *)
   | number    { print('NUMBER') }
   | ';'       { print('SEMICOLON') }

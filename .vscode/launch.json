@@ -27,6 +27,14 @@
       "program": "LEXER/yalex.main.py",
       "console": "integratedTerminal",
       "justMyCode": true
+    },
+    {
+      "name": "Python: Run yapar",
+      "type": "python",
+      "request": "launch",
+      "program": "LEXER/yapar.main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
     }
   ]
 }

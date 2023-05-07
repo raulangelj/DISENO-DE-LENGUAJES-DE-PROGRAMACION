@@ -27,7 +27,7 @@ class DFA(Automata):
     def __init__(self):
         super().__init__()
 
-    def simulate(self, input_string: Characters) -> str:
+    def simulate(self, input_string: Characters) -> List[tokenListModel]:
         current_states = [self.initial_state]
         token_list: List[tokenListModel] = []
         word = []
@@ -85,9 +85,14 @@ class DFA(Automata):
             tokenList.characters = Characters(characters_list=word)
             tokenList.accepted_state = last_accepted
             token_list.append(tokenList)
+        # remove all the not valid tokens
+        token_list = [token for token in token_list if token.token_type == type_token.TOKEN]
         # print the token list characters with the retunr value of the last accepted state
-        # for token in token_list:
-        #     print(token.characters, ':', token.accepted_state.return_value.value)
+        for token in token_list:
+            if token.accepted_state.return_value:
+                print(token.characters, ':', token.accepted_state.return_value.value)
+            else:
+                print(token.characters)
         return token_list
 
         # is_valid = any(state.is_final for state in current_states)

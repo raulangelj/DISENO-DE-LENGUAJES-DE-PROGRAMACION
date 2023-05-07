@@ -1,5 +1,6 @@
-from enum import Enum
+from src.Tokens.Tokens import *
 from typing import List
+from enum import Enum
 
 '''Types of characters: 'SIMBOL', 'OPERATOR', 'AGRUPATION' '''
 
@@ -47,11 +48,17 @@ class Characters():
             if character == '\\':
                 index += 1
                 character += value[index]
-                ascii_val = str(ord(value[index])).zfill(3)
+                ascii_val = str(escape_characters[character]).zfill(3)
             characters.append(
                 Character(value=ascii_val, type=character_types.SIMBOL, label=character))
             index += 1
         return characters
+    
+    def change_char(self, char: str, new_char: str) -> None:
+        for character in self.characters:
+            if character.label == char:
+                character.label = new_char
+                character.value = str(ord(new_char)).zfill(3)
 
     def __str__(self) -> str:
         return "".join([character.label for character in self.characters])

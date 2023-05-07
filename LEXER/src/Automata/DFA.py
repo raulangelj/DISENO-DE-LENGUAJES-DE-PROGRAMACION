@@ -88,11 +88,11 @@ class DFA(Automata):
         # remove all the not valid tokens
         token_list = [token for token in token_list if token.token_type == type_token.TOKEN]
         # print the token list characters with the retunr value of the last accepted state
-        for token in token_list:
-            if token.accepted_state.return_value:
-                print(token.characters, ':', token.accepted_state.return_value.value)
-            else:
-                print(token.characters)
+        # for token in token_list:
+        #     if token.accepted_state.return_value:
+        #         print(token.characters, ':', token.accepted_state.return_value.value)
+        #     else:
+        #         print(token.characters)
         return token_list
 
         # is_valid = any(state.is_final for state in current_states)

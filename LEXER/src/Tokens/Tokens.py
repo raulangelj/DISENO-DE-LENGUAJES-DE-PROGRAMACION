@@ -5,7 +5,7 @@ plus_simbol = '+'
 optional_simbol = '?'
 empty_simbol = 'ε'
 
-terminal = '#'
+terminal_simbol = '#'
 
 special_operators = [plus_simbol, optional_simbol]
 operators = [or_simbol, concat_simbol, kleene_simbol] + special_operators

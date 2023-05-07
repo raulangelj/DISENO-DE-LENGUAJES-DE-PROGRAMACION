@@ -44,7 +44,7 @@ class Yapar():
             if token.label in operators:
                 token.value = token.label
                 token.type = character_types.OPERATOR
-            elif token.label == terminal:
+            elif token.label == terminal_simbol:
                 token.value = token.label
                 token.type = character_types.FINAL
             elif token.label in agrupations:
@@ -118,15 +118,65 @@ class Yapar():
             for line in file:
                 for char in line:
                     file_text += char
+        # get tokens
         tokens = self.token_data.token_dfa.simulate(
             Characters(characters=file_text))
         tokens = self.clean_tokens(tokens)
         self.token_data.token_ids = tokens
-        print(tokens)
+        # get expresions
         expresions = self.expression_data.expression_dfa.simulate(
             Characters(characters=file_text))
+        expresions = self.clean_expressions(expresions)
+        self.expression_data.expression_ids = expresions
+        self.print_data()
+
+    def get_terminal(self, exp: Characters) -> Characters:
+        terminal = f'{ID_INFIX}{concat_simbol}:{concat_simbol}#'
+        terminal_c = Characters(characters=terminal)
+        terminal_c = self.change_operators_chars(terminal_c)
+        terminal_i = Parser().remove_special_characters(terminal_c.characters)
+        terminal_i = Characters(characters_list=terminal_i)
+        terminal_p = Algorithms().get_result_postfix(terminal_i.characters)
+        terminal_p = Characters(characters_list=terminal_p)
+        terminal_t = Tree(postfix=terminal_p.characters)
+        terminal_t.create_tree()
+        terminal_t.followpos_recursive(terminal_t.tree)
+        terminal_dfa = DFA()
+        terminal_dfa.create_automata(
+            postfix=terminal_p, tree=terminal_t, infix=terminal_i.characters, originial=terminal_i)
+        terminal = terminal_dfa.simulate(exp)
+        return terminal[0].characters
+
+
+    def clean_expressions(self, expresions: List[tokenListModel]) -> List[Characters]:
+        expressions = []
         for e in expresions:
-            print(e)
+            chars = e.characters
+            terminal = self.get_terminal(chars)
+            # print(terminal)
+            # find all the expressions separated by |
+            exp_c = f'({ID_INFIX}{concat_simbol}( )?)+{concat_simbol}{terminal_simbol}'
+            exp_c = Characters(characters=exp_c)
+            exp_c = self.change_operators_chars(exp_c)
+            exp_i = Parser().remove_special_characters(exp_c.characters)
+            exp_i = Characters(characters_list=exp_i)
+            exp_p = Algorithms().get_result_postfix(exp_i.characters)
+            exp_p = Characters(characters_list=exp_p)
+            exp_t = Tree(postfix=exp_p.characters)
+            exp_t.create_tree()
+            exp_t.followpos_recursive(exp_t.tree)
+            exp_dfa = DFA()
+            exp_dfa.create_automata(
+                postfix=exp_p, tree=exp_t, infix=exp_i.characters, originial=exp_i)
+            expression_input = str(chars)
+            expression_input = expression_input[len(str(terminal)):].strip()
+            exp = exp_dfa.simulate(Characters(characters=expression_input))
+            for a in exp:
+                real_expression = Characters()
+                real_expression.characters = terminal.characters + a.characters.characters
+                expressions.append(real_expression)
+        return expressions
+
 
     def clean_tokens(self, tokens: List[tokenListModel]) -> List[Characters]:
         tokens_string = ''
@@ -148,4 +198,13 @@ class Yapar():
                                infix=id_i, originial=id_i)
         # simulate the tokens
         tokens = id_dfa.simulate(Characters(characters=tokens_string))
-        return tokens
+        return [token.characters for token in tokens]
+
+    def print_data(self) -> None:
+        print('Tokens: ')
+        for token in self.token_data.token_ids:
+            print(token)
+        print('Expresions: ')
+        for exp in self.expression_data.expression_ids:
+            print(exp)
+        

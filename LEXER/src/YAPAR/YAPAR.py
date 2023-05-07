@@ -21,7 +21,7 @@ class Token_data:
         self.token_postfix: Characters = None
         self.token_tree: Tree = None
         self.token_dfa: DFA = None
-        self.token_ids: List[Characters] = None
+        self.token_ids: List[Characters] = []
 
 
 class Expression_data:
@@ -30,7 +30,7 @@ class Expression_data:
         self.expression_postfix: Characters = None
         self.expression_tree: Tree = None
         self.expression_dfa: DFA = None
-        self.expression_ids: List[Characters] = None
+        self.expression_ids: List[Characters] = []
 
 
 class Yapar():
@@ -39,6 +39,7 @@ class Yapar():
         self.expression_data = Expression_data()
         self.generate_token_dfa()
         self.generate_expression_dfa()
+        self.terminals: List[Characters] = []
 
     def change_operators_chars(self, chars: Characters) -> Characters:
         # convert the |, concat y kleene to operators and the (,) to agrupations
@@ -154,6 +155,7 @@ class Yapar():
         for e in expresions:
             chars = e.characters
             terminal = self.get_terminal(chars)
+            self.terminals.append(Characters(characters=str(terminal)[:-1]))
             # print(terminal)
             # find all the expressions separated by |
             exp_c = f'({ID_INFIX}{concat_simbol}( )?)+{concat_simbol}{terminal_simbol}'

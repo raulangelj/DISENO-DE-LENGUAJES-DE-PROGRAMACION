@@ -38,6 +38,7 @@ class Characters():
         self.characters = self.convert_to_characters(characters)
         if characters_list is not None:
             self.characters = characters_list
+        self.word = self.__str__()
 
     def convert_to_characters(self, value: str) -> List[Character]:
         characters = []

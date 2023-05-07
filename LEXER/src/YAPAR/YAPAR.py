@@ -14,6 +14,7 @@ TOKEN_INFIX = f'%{concat_simbol}t{concat_simbol}o{concat_simbol}k{concat_simbol}
 # EXPRESION_INFIX = f':{concat_simbol}\\n{concat_simbol}#'
 EXPRESION_INFIX = f'{ID_INFIX}{concat_simbol}:{concat_simbol}\\n{concat_simbol}( {concat_simbol} *){concat_simbol}{ID_INFIX}{concat_simbol}( {concat_simbol}{ID_INFIX})*{concat_simbol}\\n{concat_simbol}( +{concat_simbol}{or_yapar}{concat_simbol}( {concat_simbol}{ID_INFIX})+{concat_simbol}\\n)*{concat_simbol};{concat_simbol}#'
 
+
 class Token_data:
     def __init__(self) -> None:
         self.token_infix: Characters = None
@@ -21,6 +22,7 @@ class Token_data:
         self.token_tree: Tree = None
         self.token_dfa: DFA = None
         self.token_ids: List[Characters] = None
+
 
 class Expression_data:
     def __init__(self) -> None:
@@ -147,7 +149,6 @@ class Yapar():
         terminal = terminal_dfa.simulate(exp)
         return terminal[0].characters
 
-
     def clean_expressions(self, expresions: List[tokenListModel]) -> List[Characters]:
         expressions = []
         for e in expresions:
@@ -177,7 +178,6 @@ class Yapar():
                 expressions.append(real_expression)
         return expressions
 
-
     def clean_tokens(self, tokens: List[tokenListModel]) -> List[Characters]:
         tokens_string = ''
         for token in tokens:
@@ -203,8 +203,7 @@ class Yapar():
     def print_data(self) -> None:
         print('Tokens: ')
         for token in self.token_data.token_ids:
-            print(token)
+            print("\t"+str(token))
         print('Expresions: ')
         for exp in self.expression_data.expression_ids:
-            print(exp)
-        
+            print("\t"+str(exp))

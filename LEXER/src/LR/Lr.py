@@ -7,32 +7,6 @@ import graphviz as gv
 from src.Tokens.Tokens import arrow, dot_ls
 
 
-# simpleState1 = StateSintactic()
-# simpleState1.id = 'I0'
-# simpleState1.items = [
-#     Production([TokenSintactic('S'), TokenSintactic('-\\>'), TokenSintactic('E')]),
-#     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'), TokenSintactic('T')]),
-#     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('T')]),
-# ]
-# simpleState1.clousure = [
-#     Production([TokenSintactic('S'), TokenSintactic('-\\>'), TokenSintactic('E')]),
-#     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'), TokenSintactic('T')]),
-# ]
-
-# simpleState2 = StateSintactic()
-# simpleState2.id = 'I1'
-# simpleState2.items = [
-#     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'), TokenSintactic('T')]),
-#     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('T')]),
-#     Production([TokenSintactic('T'), TokenSintactic('-\\>'), TokenSintactic('T'), TokenSintactic('*'), TokenSintactic('F')]),
-# ]
-# simpleState2.clousure = [
-#     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'), TokenSintactic('T')]),
-#     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('T')]),
-#     Production([TokenSintactic('T'), TokenSintactic('-\\>'), TokenSintactic('T'), TokenSintactic('*'), TokenSintactic('F')]),
-#     Production([TokenSintactic('T'), TokenSintactic('-\\>'), TokenSintactic('F')]),
-# ]
-
 first = [
     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'), TokenSintactic('T')]),
     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('T')]),
@@ -44,6 +18,12 @@ first = [
 
 second = [
     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'),  TokenSintactic(dot_ls) , TokenSintactic('T')]),
+]
+
+# I3
+third = [
+    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic(dot_ls)]),
+    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic(dot_ls), TokenSintactic('+'), TokenSintactic('T')]),
 ]
 
 class DotExpression():
@@ -84,11 +64,23 @@ class Lr0():
         I0 = self.aumented_grammar(initial_item)
         self.states.append(I0)
         state_dummy = StateSintactic()
+        # * Testing
         state_dummy.id = "I7"
         state_dummy.items = second
         state_dummy.clousure = self.closure(state_dummy.items)
         self.states.append(state_dummy)
 
+        state_dummy2 = StateSintactic()
+        state_dummy2.id = 'I2'
+        state_dummy2.items = self.goTo(I0.clousure, TokenSintactic('T'))
+        state_dummy2.clousure = self.closure(state_dummy2.items)
+        self.states.append(state_dummy2)
+
+        state_dummy3 = StateSintactic()
+        state_dummy3.id = 'I6'
+        state_dummy3.items = self.goTo(third, TokenSintactic('+'))
+        state_dummy3.clousure = self.closure(state_dummy3.items)
+        self.states.append(state_dummy3)
 
 
 
@@ -109,94 +101,48 @@ class Lr0():
         # get the closure
         aumented_clousure = self.closure(state.items)
         state.clousure = aumented_clousure
-        # # aumented_clousere will have a list of productions just as items but after the the arrow string from tokens will add the dto_ls string
-        # aumented_clousure = []
-        # for item in items:
-        #     tempProduction = Production()
-        #     for index, token in enumerate(item.value):
-        #         tempProduction.value.append(token)
-        #         if index == 1:
-        #             tempProduction.value.append(arrow)
-        #     aumented_clousure.append(tempProduction)
-        # create the new state
-
-        # state.clousure = aumented_clousure
         return state
+    
+    def goTo(self, listOfItems: List[Production], token: TokenSintactic) -> List[Production]:
+        listOfItem = listOfItems.copy()
+        I: List[Production] = []
+        for item in listOfItem:
+            index_dot = item.index_of(TokenSintactic(dot_ls))
+            if index_dot + 1 < len(item.value):
+                if item.value[index_dot + 1].value == token.value:
+                    item.value[index_dot], item.value[index_dot + 1] = item.value[index_dot + 1], item.value[index_dot]
+                    I.append(item)
+        return self.closure(I)
     
     def closure(self, listOfItems: List[Production]) -> List[Production]:
         J:List[Production] = listOfItems.copy()
         for item in J:
-            dot_expression = self.get_dot_expression(item.value)
-            if dot_expression:
+            if dot_expression := self.get_dot_expression(item.value):
                 for production in self.og_productions:
                     first_token = production.first_token()
-                    if first_token.value == dot_expression.next_value.value:
-                        temp = Production()
-                        temp.value = production.value.copy()
-                        temp.value.insert(2, TokenSintactic(dot_ls))
-                        if temp not in J:
-                            J.append(temp)
+                    if dot_expression.next_value:
+                        if first_token.value == dot_expression.next_value.value:
+                            temp = Production()
+                            temp.value = production.value.copy()
+                            temp.value.insert(2, TokenSintactic(dot_ls))
+                            if temp not in J:
+                                J.append(temp)
         return J
-        # closure:List[Production] = []
-        # dot_expression = self.get_dot_expression(state.items)
-        # # if all the dot_expression.next_value are no_terminals then return the closure
-        # if all(dot.next_value in self.non_terminals for dot in dot_expression):
-        #     return closure
-        # continue_token = TokenSintactic('')
-        # for dot_next_val in dot_expression:
-        #     for index, item in enumerate(self.og_productions):
-        #         first_token = item.first_token()
-        #         if first_token.value == dot_next_val.next_value.value or first_token.value == continue_token.value:
-        #             temp = Production()
-        #             temp.value = item.value.copy()
-        #             # temp.value.pop(dot_next_val.index_dot)
-        #             temp.value.insert(dot_next_val.index_dot, TokenSintactic(dot_ls))
-        #             closure.append(temp)
-        #             continue_token = item.last_token() if item.last_token() in self.terminals else continue_token
-        #         if first_token.value != dot_next_val.next_value.value:
-        #             dot_next_val.next_value = first_token
-        # # for index, item in enumerate(state.items):
-        # #     temp = Production()
-        # #     temp.value = item.value.copy()
-        # #     temp.value[index].pop(dot_expression[index].index_dot)
-        # #     temp.value[index].insert(dot_expression[index].index_dot + 1, dot_ls)
-        # #     closure.append(temp)
-        # return closure
-
-    # def get_dot_expression(self, items: List[Production]) -> List[DotExpression]:
-    #     dot_expressions: List[DotExpression] = []
-    #     for item in items:
-    #         for index, token in enumerate(item.value):
-    #             if token.value == dot_ls:
-    #                 dot_expression = DotExpression()
-    #                 dot_expression.index_dot = index
-    #                 dot_expression.next_value =  item.value[index + 1] if index + 1 < len(item.value) else None
-    #                 dot_expressions.append(dot_expression)
-    #     return dot_expressions
 
     def get_dot_expression(self, items: List[TokenSintactic]) -> List[DotExpression]:
-        # dot_expressions: List[DotExpression] = []
         for index, token in enumerate(items):
             if token.value == dot_ls:
                 dot_expression = DotExpression()
                 dot_expression.index_dot = index
                 dot_expression.next_value =  items[index + 1] if index + 1 < len(items) else None
                 return dot_expression
-                # dot_expressions.append(dot_expression)
         return None
 
 
 
 
     def graph(self) -> None:
-        # # ! MOCK borrar
-        # self.states = [simpleState1, simpleState2]
-        # self.transitions = [
-        #     Transition(simpleState1, simpleState2, TokenSintactic('E')),
-        # ]
-
         dot = gv.Digraph(comment='LR0', filename='LR0.gv', format='pdf', node_attr={'shape': 'record', 'style': 'rounded'})
-        # dot.attr(rankdir='LR')
         # Nodes
         for state in self.states:
             dot.node(state.id, state.state_label())

@@ -11,6 +11,16 @@ class Production():
     
     def last_token(self) -> TokenSintactic:
         return self.value[-1]
+    
+    def index_of(self, token: TokenSintactic) -> int:
+        return next(
+            (
+                i
+                for i in range(len(self.value))
+                if self.value[i].value == token.value
+            ),
+            -1,
+        )
 
     def __str__(self) -> str:
         return ' '.join([token.value for token in self.value])

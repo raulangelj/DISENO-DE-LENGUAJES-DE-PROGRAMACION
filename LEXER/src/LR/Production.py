@@ -1,0 +1,22 @@
+from __future__ import annotations
+from typing import List
+from src.LR.TokenSintactic import TokenSintactic
+
+class Production():
+    def __init__(self, value = []) -> None:
+        self.value: List[TokenSintactic] = value
+
+    def first_token(self) -> TokenSintactic:
+        return self.value[0]
+    
+    def last_token(self) -> TokenSintactic:
+        return self.value[-1]
+
+    def __str__(self) -> str:
+        return ' '.join([token.value for token in self.value])
+    
+    def __eq__(self, __value: Production) -> bool:
+        # check if the items are the same
+        if len(self.value) != len(__value.value):
+            return False
+        return all(self.value[i] == __value.value[i] for i in range(len(self.value)))

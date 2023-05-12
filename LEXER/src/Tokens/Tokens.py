@@ -28,3 +28,6 @@ escape_characters = {
     '\\f': ord('\f'),
     '\\v': ord('\v'),
 }
+
+arrow = "-\\>"
+dot_ls = "·"

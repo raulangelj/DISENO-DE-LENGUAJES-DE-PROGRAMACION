@@ -8,3 +8,4 @@ dist/
 output/
 LEXER/*.pkl
 scanner.py
+LR_GRAPH/

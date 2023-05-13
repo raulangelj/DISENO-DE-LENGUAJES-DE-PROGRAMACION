@@ -118,12 +118,17 @@ class Lr0():
                 new_state = self.new_state(goto)
                 print(f'\n goto with {str(grammar)}')
                 self.print_list_production(new_state.clousure)
+                print(C.index(I))
                 if len(goto) > 0 and new_state not in C:
                     id_label = f'I{id_counter}'
                     id_counter += 1
                     new_state.id = id_label
                     C.append(new_state)
                     self.transitions.append(Transition(I, new_state, grammar))
+                elif new_state in C:
+                    state_index = C.index(new_state)
+                    state = C[state_index]
+                    self.transitions.append(Transition(I, state, grammar))
 
         # add the states
         self.states = C
@@ -230,7 +235,7 @@ class Lr0():
             dot.node(state.id, state.state_label())
         
         # Edges
-        # for transition in self.transitions:
-        #     dot.edge(transition.origin.id, transition.destination.id, transition.simbol.value)
+        for transition in self.transitions:
+            dot.edge(transition.origin.id, transition.destination.id, transition.simbol.value)
 
         dot.render('LEXER/LR_GRAPH/LR0.gv', view=True)

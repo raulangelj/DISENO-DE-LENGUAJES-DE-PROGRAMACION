@@ -181,7 +181,8 @@ class Lr0():
                     temp.value = item.value.copy()
                     temp.value[index_dot], temp.value[index_dot + 1] = item.value[index_dot + 1], item.value[index_dot]
                     I.append(temp)
-        return self.closure(I)
+        # return self.closure(I)
+        return I
     
     def get_grammar(self, items: List[Production]) -> List[TokenSintactic]:
         grammar: List[TokenSintactic] = []

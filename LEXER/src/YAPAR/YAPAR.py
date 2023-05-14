@@ -5,7 +5,8 @@ from src.Convertor.Parser import Parser
 from src.Convertor.ConvertorAlgorithms import Algorithms
 from src.Tree.Tree import Tree
 from src.Convertor.Character import *
-
+from src.LR.Production import Production
+from src.LR.TokenSintactic import TokenSintactic
 
 ID_INFIX = f'(A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z){concat_simbol}((A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z)|(0|1|2|3|4|5|6|7|8|9))*'
 
@@ -132,6 +133,32 @@ class Yapar():
         expresions = self.clean_expressions(expresions)
         self.expression_data.expression_ids = expresions
         self.print_data()
+
+    def get_productions(self) -> List[Production]:
+        ids = f'{ID_INFIX}{concat_simbol}#'
+        ids_c = Characters(characters=ids)
+        ids_c = self.change_operators_chars(ids_c)
+        ids_i = Parser().remove_special_characters(ids_c.characters)
+        ids_i = Characters(characters_list=ids_i)
+        ids_p = Algorithms().get_result_postfix(ids_i.characters)
+        ids_p = Characters(characters_list=ids_p)
+        ids_t = Tree(postfix=ids_p.characters)
+        ids_t.create_tree()
+        ids_t.followpos_recursive(ids_t.tree)
+        ids_dfa = DFA()
+        ids_dfa.create_automata(
+            postfix=ids_p, tree=ids_t, infix=ids_i.characters, originial=ids_i)
+        # get all the ids
+        productions: List[Production] = []
+        for exp in self.expression_data.expression_ids:
+            ids_scanned = ids_dfa.simulate(exp)
+            production = Production()
+            for index, _id in enumerate(ids_scanned):
+                if index == 1:
+                    production.add(TokenSintactic(arrow))
+                production.add(TokenSintactic(str(_id.characters)))
+            productions.append(production)
+        return productions
 
     def get_terminal(self, exp: Characters) -> Characters:
         terminal = f'{ID_INFIX}{concat_simbol}:{concat_simbol}#'

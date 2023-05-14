@@ -15,7 +15,8 @@ example_lr = [
 def main():
     yapar = Yapar()
     yapar.read_file('LEXER/Mocks/YAPAR/slr-1.yalp')
-    lr0 = Lr0(example_lr)
+    productions = yapar.get_productions()
+    lr0 = Lr0(productions)
     lr0.graph()
     # yapar.read_file('src/YAPAR/grammar.yapar')
     # yapar.create_automata()

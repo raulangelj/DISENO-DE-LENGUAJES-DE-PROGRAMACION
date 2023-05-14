@@ -3,8 +3,13 @@ from typing import List
 from src.LR.TokenSintactic import TokenSintactic
 
 class Production():
-    def __init__(self, value = []) -> None:
+    def __init__(self, value=None) -> None:
+        if value is None:
+            value = []
         self.value: List[TokenSintactic] = value
+
+    def add(self, token: TokenSintactic) -> None:
+        self.value.append(token)
 
     def first_token(self) -> TokenSintactic:
         return self.value[0]

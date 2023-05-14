@@ -1,6 +1,7 @@
 import os
 import glob
 import pickle
+import shutil
 from src.YALEX.YALEX import Yalex
 from termcolor import colored
 from src.Convertor.ConvertorAlgorithms import Algorithms
@@ -8,8 +9,8 @@ from src.Convertor.Parser import Parser
 from src.Tree.Tree import Tree
 from src.Automata.DFA import DFA
 from src.Convertor.Character import *
+from src.Tokens.Tokens import *
 
-RUTE_COMPILER = 'LEXER/'
 
 compiler_content = '''from src.Automata.DFA import DFA
 from src.Convertor.Character import *
@@ -23,7 +24,7 @@ with open(file_path, 'r') as file:
         for character in line:
             file_data += character
 tokens = None
-with open('LEXER/automata.pkl', 'rb') as file:
+with open('LEXER/data/automata.pkl', 'rb') as file:
     automata = pickle.load(file)
     sentence = Characters(file_data)
     tokens = automata.simulate(sentence)
@@ -103,9 +104,14 @@ def main():
                 # print(adf.simulate(')'))
                 # print(adf.simulate('11.11E-11'))
                 # print(adf.simulate('1.1.1.E15'))
+                if os.path.exists(f'{RUTE_DATA}'):
+                    shutil.rmtree(f'{RUTE_DATA}')
+                os.makedirs(f'{RUTE_DATA}')
                 # create a pickle file with the automata
-                with open(f'{RUTE_COMPILER}automata.pkl', 'wb') as file:
+                with open(f'{RUTE_DATA}automata.pkl', 'wb') as file:
                     pickle.dump(adf, file)
+                with open(f'{RUTE_DATA}tokens.pkl', 'wb') as file:
+                    pickle.dump(list(yalex.rule_returns.keys()), file)
 
                 create_scanner(header, trailer)
                 # text_to_analyze = ''

@@ -116,6 +116,9 @@ class Yapar():
         del token_t
         del token_dfa
 
+    def get_tokens_array(self) -> List[str]:
+        return [str(token) for token in self.token_data.token_ids]
+
     def read_file(self, file_name: str) -> List[tokenListModel]:
         file_text = ''
         with open(file_name, 'r') as file:

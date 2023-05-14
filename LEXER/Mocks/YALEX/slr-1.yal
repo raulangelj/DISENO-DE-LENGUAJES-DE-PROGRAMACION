@@ -7,14 +7,17 @@ let ws = delim+
 let letter = ['A'-'Z''a'-'z']
 let digit = ['0'-'9']
 let id = letter(letter|digit)*
+let plus = ["+"]
+let times = ["*"]
+let lparen = ["("]
+let rparen = [")"]
 
 rule tokens = 
     ws
-  | "if"     { print('IF') }
   | id        { print('ID') }               (* Cambie por una acción válida, que devuelva el token *)
-  | '+'       { print('PLUS') }
-  | '*'       { print('TIMES') }
-  | '('       { print('LPAREN') }
-  | ')'       { print('RPAREN') }
+  | plus      { print('PLUS') }
+  | times     { print('TIMES') }
+  | lparen    { print('LPAREN') }
+  | rparen    { print('RPAREN') }
 
 (* print('trailer') *)

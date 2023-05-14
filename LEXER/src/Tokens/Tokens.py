@@ -31,3 +31,6 @@ escape_characters = {
 
 arrow = "-\\>"
 dot_ls = "·"
+
+RUTE_COMPILER = 'LEXER/'
+RUTE_DATA = 'LEXER/data/'

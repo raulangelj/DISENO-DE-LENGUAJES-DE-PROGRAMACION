@@ -1,0 +1,44 @@
+(* from TOKENS import *
+from CONSTANTES_SCANNER import * *)
+
+(* Lexer para Gramática No. 4 ESTE USA EL ARCHIVO ESTRA LLAMADO: 
+CONSTANTES_SCANNER.py*)
+
+let delim = [' ''\t''\n']
+let ws = delim+
+let letter = ['A'-'Z''a'-'z']
+let str = ('_')*
+let digit = ['0'-'9']
+let digits = digit+
+let id = letter(letter|str|digit)*
+let number = digits('.'digits)?('E'['+''-']?digits)?
+let semicolon = ';'
+let assignop = ":="
+let lt = '<'
+let eq = '='
+let plus = '+'
+let minus = '-'
+let times = '*'
+let div = '/'
+let lparen = '('
+let rparen = ')'
+
+rule tokens = 
+    ws
+  | id        { print(AAA) }               (* Cambie por una acción válida, que devuelva el token *)
+  | number    { print('NUMBER') }
+  | semicolon       { print('SEMICOLON') }
+  | assignop      { print('ASSIGNOP') }
+  | lt       { print('LT') }
+  | eq       { print('EQ') }
+  | plus       { print('PLUS') }
+  | minus       { print('MINUS') }
+  | times       { print('TIMES') }
+  | div       { print('DIV') }
+  | lparen       { print('LPAREN') }
+  | rparen       { print('RPAREN') }
+
+(* 
+if True:
+	print('Esto es desde eĺ trailer')
+ *)

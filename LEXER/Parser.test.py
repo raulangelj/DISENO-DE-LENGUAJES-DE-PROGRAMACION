@@ -1,4 +1,4 @@
-from Convertor.Parser import Parser
+from src.Convertor.Parser import Parser
 from termcolor import colored
 import pandas as pd
 import os

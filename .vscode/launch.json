@@ -16,7 +16,23 @@
       "name": "Python: Run tree",
       "type": "python",
       "request": "launch",
-      "program": "LEXER/testing.tree.py",
+      "program": "LEXER/tree.main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Python: Run yalex",
+      "type": "python",
+      "request": "launch",
+      "program": "LEXER/yalex.main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Python: Run yapar",
+      "type": "python",
+      "request": "launch",
+      "program": "LEXER/yapar.main.py",
       "console": "integratedTerminal",
       "justMyCode": true
     }

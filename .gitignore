@@ -10,3 +10,4 @@ LEXER/*.pkl
 scanner.py
 LR_GRAPH/
 LEXER/data/*.pkl
+*.zip

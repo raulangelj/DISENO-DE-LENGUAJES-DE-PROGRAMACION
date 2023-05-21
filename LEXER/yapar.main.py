@@ -27,9 +27,9 @@ def main():
                 with open(f'{RUTE_DATA}tokens.pkl', 'rb') as file:
                     tokens = pickle.load(file)
                     yapar = Yapar()
-                    file_path = input('Ingrese la ruta del archivo: ')
-                    yapar.read_file(file_path)
-                    # yapar.read_file('LEXER/Mocks/YAPAR/slr-1.yalp')
+                    # file_path = input('Ingrese la ruta del archivo: ')
+                    # yapar.read_file(file_path)
+                    yapar.read_file('LEXER/Mocks/YAPAR/slr-1.yalp')
                     # check if all the tokens in yapar.get_tokens_array() are in tokens
                     for token in yapar.get_tokens_array():
                         if token.lower() not in tokens:
@@ -37,6 +37,9 @@ def main():
                     productions = yapar.get_productions()
                     lr0 = Lr0(productions)
                     lr0.graph()
+                    l = lr0.get_first(TokenSintactic('expression'))
+                    for i in l:
+                        print(i.value)
             except Exception as e:
                 print(e)
             # yapar.read_file('src/YAPAR/grammar.yapar')

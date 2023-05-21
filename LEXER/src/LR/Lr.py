@@ -33,22 +33,15 @@ class DotExpression():
 
 
 # **LR**
-# - terminals: List[TokenSintactic]
-# - non_terminals: List[TokenSintactic]
-# - start: TokenSintactic
-# - transitions: List[Transition]
-# - states: List[StateSintactic]
 # class Lr that recieves: the first list of productions to create the LR0 automata
 class Lr0():
     def __init__(self, initial_item: List[Production]) -> None:
-        self.non_terminals: List[TokenSintactic] = []
+        self.terminals: List[TokenSintactic] = []
         self.start: TokenSintactic = None
         self.transitions: List[Transition] = []
         self.states: List[StateSintactic] = []
-        # self.create(initial_item)
-        # ! change for initial item
         self.alphabet: List[TokenSintactic] = self.get_alphabet(initial_item)
-        self.terminals: List[TokenSintactic] = self.get_terminals(initial_item)
+        self.non_terminals: List[TokenSintactic] = self.get_non_terminals(initial_item)
         self.og_productions: List[Production] = initial_item
         self.create(initial_item)
 
@@ -60,12 +53,12 @@ class Lr0():
                     alphabet.append(token)
         return alphabet
 
-    def get_terminals(self, initial_items: List[Production]) -> List[TokenSintactic]:
-        terminals: List[TokenSintactic] = []
+    def get_non_terminals(self, initial_items: List[Production]) -> List[TokenSintactic]:
+        non_terminals: List[TokenSintactic] = []
         for item in initial_items:
-            if item.first_token() not in terminals:
-                terminals.append(item.first_token())
-        return terminals
+            if item.first_token() not in non_terminals:
+                non_terminals.append(item.first_token())
+        return non_terminals
 
     def aumented(self, initial_items: List[Production]) -> List[Production]:
         first_expression = initial_items[0].first_token()
@@ -112,9 +105,9 @@ class Lr0():
             for grammar in self.get_grammar(I.clousure):
                 goto = self.goTo(I.clousure, grammar)
                 new_state = self.new_state(goto)
-                print(f'\n goto with {str(grammar)}')
-                self.print_list_production(new_state.clousure)
-                print(C.index(I))
+                # print(f'\n goto with {str(grammar)}')
+                # self.print_list_production(new_state.clousure)
+                # print(C.index(I))
                 if len(goto) > 0 and new_state not in C:
                     id_label = f'I{id_counter}'
                     id_counter += 1
@@ -204,6 +197,27 @@ class Lr0():
                 dot_expression.next_value =  items[index + 1] if index + 1 < len(items) else None
                 return dot_expression
         return None
+
+    def get_first_elements(self, X: TokenSintactic) -> List[TokenSintactic]:
+        first_elements: List[TokenSintactic] = []
+        for production in self.og_productions:
+            first_element_token = production.first_token()
+            element = production.first_token_expression()
+            if element != X and first_element_token == X and element not in first_elements:
+                first_elements.append(element)
+        return first_elements
+
+    
+    def get_first(self, X: TokenSintactic) -> List[TokenSintactic]:
+        if X not in self.non_terminals:
+            return [X]
+        first_values: List[TokenSintactic] = []
+        first_elements = self.get_first_elements(X)
+        for element in first_elements:
+            if element != X:
+                first_values += self.get_first(element)
+        return first_values
+        
 
 
 

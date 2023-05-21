@@ -40,7 +40,7 @@ class Yapar():
         self.expression_data = Expression_data()
         self.generate_token_dfa()
         self.generate_expression_dfa()
-        self.terminals: List[Characters] = []
+        self.nonterminals: List[Characters] = []
 
     def change_operators_chars(self, chars: Characters) -> Characters:
         # convert the |, concat y kleene to operators and the (,) to agrupations
@@ -163,30 +163,30 @@ class Yapar():
             productions.append(production)
         return productions
 
-    def get_terminal(self, exp: Characters) -> Characters:
-        terminal = f'{ID_INFIX}{concat_simbol}:{concat_simbol}#'
-        terminal_c = Characters(characters=terminal)
-        terminal_c = self.change_operators_chars(terminal_c)
-        terminal_i = Parser().remove_special_characters(terminal_c.characters)
-        terminal_i = Characters(characters_list=terminal_i)
-        terminal_p = Algorithms().get_result_postfix(terminal_i.characters)
-        terminal_p = Characters(characters_list=terminal_p)
-        terminal_t = Tree(postfix=terminal_p.characters)
-        terminal_t.create_tree()
-        terminal_t.followpos_recursive(terminal_t.tree)
-        terminal_dfa = DFA()
-        terminal_dfa.create_automata(
-            postfix=terminal_p, tree=terminal_t, infix=terminal_i.characters, originial=terminal_i)
-        terminal = terminal_dfa.simulate(exp)
-        return terminal[0].characters
+    def get_nonterminal(self, exp: Characters) -> Characters:
+        nonterminal = f'{ID_INFIX}{concat_simbol}:{concat_simbol}#'
+        nonterminal_c = Characters(characters=nonterminal)
+        nonterminal_c = self.change_operators_chars(nonterminal_c)
+        nonterminal_i = Parser().remove_special_characters(nonterminal_c.characters)
+        nonterminal_i = Characters(characters_list=nonterminal_i)
+        nonterminal_p = Algorithms().get_result_postfix(nonterminal_i.characters)
+        nonterminal_p = Characters(characters_list=nonterminal_p)
+        nonterminal_t = Tree(postfix=nonterminal_p.characters)
+        nonterminal_t.create_tree()
+        nonterminal_t.followpos_recursive(nonterminal_t.tree)
+        nonterminal_dfa = DFA()
+        nonterminal_dfa.create_automata(
+            postfix=nonterminal_p, tree=nonterminal_t, infix=nonterminal_i.characters, originial=nonterminal_i)
+        nonterminal = nonterminal_dfa.simulate(exp)
+        return nonterminal[0].characters
 
     def clean_expressions(self, expresions: List[tokenListModel]) -> List[Characters]:
         expressions = []
         for e in expresions:
             chars = e.characters
-            terminal = self.get_terminal(chars)
-            self.terminals.append(Characters(characters=str(terminal)[:-1]))
-            # print(terminal)
+            nonterminal = self.get_nonterminal(chars)
+            self.nonterminals.append(Characters(characters=str(nonterminal)[:-1]))
+            # print(nonterminal)
             # find all the expressions separated by |
             exp_c = f'({ID_INFIX}{concat_simbol}( )?)+{concat_simbol}{terminal_simbol}'
             exp_c = Characters(characters=exp_c)
@@ -202,11 +202,11 @@ class Yapar():
             exp_dfa.create_automata(
                 postfix=exp_p, tree=exp_t, infix=exp_i.characters, originial=exp_i)
             expression_input = str(chars)
-            expression_input = expression_input[len(str(terminal)):].strip()
+            expression_input = expression_input[len(str(nonterminal)):].strip()
             exp = exp_dfa.simulate(Characters(characters=expression_input))
             for a in exp:
                 real_expression = Characters()
-                real_expression.characters = terminal.characters + a.characters.characters
+                real_expression.characters = nonterminal.characters + a.characters.characters
                 expressions.append(real_expression)
         return expressions
 

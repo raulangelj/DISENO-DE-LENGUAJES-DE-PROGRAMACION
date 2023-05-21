@@ -14,6 +14,11 @@ class Production():
     def first_token(self) -> TokenSintactic:
         return self.value[0]
     
+    # * This method is used to get the first token of the expression
+    # * that is after the arrow
+    def first_token_expression(self) -> TokenSintactic:
+        return self.value[2]
+    
     def last_token(self) -> TokenSintactic:
         return self.value[-1]
     

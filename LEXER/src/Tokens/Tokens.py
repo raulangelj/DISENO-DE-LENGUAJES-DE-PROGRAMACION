@@ -7,6 +7,8 @@ empty_simbol = 'ε'
 
 terminal_simbol = '#'
 
+acceptance_simbol = '$'
+
 special_operators = [plus_simbol, optional_simbol]
 operators = [or_simbol, concat_simbol, kleene_simbol] + special_operators
 

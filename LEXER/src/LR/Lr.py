@@ -1,10 +1,10 @@
 from typing import List
 from src.LR.TokenSintactic import TokenSintactic
 from src.LR.Production import Production
-from src.LR.StateSintactic import StateSintactic
+from src.LR.StateSintactic import StateSintactic, state_types
 from src.LR.Transition import Transition
 import graphviz as gv
-from src.Tokens.Tokens import arrow, dot_ls
+from src.Tokens.Tokens import arrow, dot_ls, acceptance_simbol
 
 first = [
     Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'), TokenSintactic('T')]),
@@ -67,7 +67,7 @@ class Lr0():
                 [TokenSintactic(f"{first_expression.value}'"),
                 TokenSintactic(arrow),
                 TokenSintactic(dot_ls),
-                TokenSintactic(first_expression.value),]
+                TokenSintactic(first_expression.value), TokenSintactic(acceptance_simbol)]
             )
         ]
     
@@ -108,7 +108,11 @@ class Lr0():
                 # print(f'\n goto with {str(grammar)}')
                 # self.print_list_production(new_state.clousure)
                 # print(C.index(I))
-                if len(goto) > 0 and new_state not in C:
+                if grammar.value == acceptance_simbol:
+                    new_state.change_acceptance()
+                    C.append(new_state)
+                    self.transitions.append(Transition(I, new_state, grammar))
+                elif len(goto) > 0 and new_state not in C:
                     id_label = f'I{id_counter}'
                     id_counter += 1
                     new_state.id = id_label
@@ -226,10 +230,9 @@ class Lr0():
         dot = gv.Digraph(comment='LR0', filename='LR0.gv', format='pdf', node_attr={'shape': 'record', 'style': 'rounded'})
         # Nodes
         for state in self.states:
-            dot.node(state.id, state.state_label())
+            dot.node(state.id, state.state_label(), shape=state.type.name)
         
         # Edges
         for transition in self.transitions:
             dot.edge(transition.origin.id, transition.destination.id, transition.simbol.value)
-
         dot.render('LEXER/LR_GRAPH/LR0.gv', view=True)

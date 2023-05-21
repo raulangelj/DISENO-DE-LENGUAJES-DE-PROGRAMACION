@@ -1,14 +1,28 @@
 from __future__ import annotations
 from typing import List
+from enum import Enum
 from src.LR.Production import Production
 
+
+state_types = Enum('state_types', [
+                       'record', 'plain'])
+
 class StateSintactic():
-    def __init__(self) -> None:
+    def __init__(self, type: state_types = state_types.record) -> None:
         self.id: str = ''
         self.items: List[Production] = []
         self.clousure: List[Production] = []
+        self.type: str = type
+
+    def change_acceptance(self) -> None:
+        self.type = state_types.plain
+        self.clousure = []
+        self.items = []
+        self.id = 'accept'
 
     def state_label(self) -> str:
+        if self.type == state_types.plain:
+            return self.id
         items = "".join([f' {str(p)} \\l ' for p in self.items])
         # clousure = "".join([f' {str(p)} \\l ' for p in self.clousure])
         # add in clousure the str(p) if the str is not in items

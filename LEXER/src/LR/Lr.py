@@ -7,23 +7,33 @@ import graphviz as gv
 from src.Tokens.Tokens import arrow, dot_ls, acceptance_simbol
 
 first = [
-    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'), TokenSintactic('T')]),
-    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('T')]),
-    Production([TokenSintactic('T'), TokenSintactic('-\\>'), TokenSintactic('T'), TokenSintactic('*'), TokenSintactic('F')]),
-    Production([TokenSintactic('T'), TokenSintactic('-\\>'), TokenSintactic('F')]),
-    Production([TokenSintactic('F'), TokenSintactic('-\\>'), TokenSintactic('('), TokenSintactic('E'), TokenSintactic(')')]),
-    Production([TokenSintactic('F'), TokenSintactic('-\\>'), TokenSintactic('id')]),
+    Production([TokenSintactic('E'), TokenSintactic('-\\>'),
+               TokenSintactic('E'), TokenSintactic('+'), TokenSintactic('T')]),
+    Production([TokenSintactic('E'), TokenSintactic(
+        '-\\>'), TokenSintactic('T')]),
+    Production([TokenSintactic('T'), TokenSintactic('-\\>'),
+               TokenSintactic('T'), TokenSintactic('*'), TokenSintactic('F')]),
+    Production([TokenSintactic('T'), TokenSintactic(
+        '-\\>'), TokenSintactic('F')]),
+    Production([TokenSintactic('F'), TokenSintactic('-\\>'),
+               TokenSintactic('('), TokenSintactic('E'), TokenSintactic(')')]),
+    Production([TokenSintactic('F'), TokenSintactic(
+        '-\\>'), TokenSintactic('id')]),
 ]
 
 second = [
-    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic('+'),  TokenSintactic(dot_ls) , TokenSintactic('T')]),
+    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'),
+               TokenSintactic('+'),  TokenSintactic(dot_ls), TokenSintactic('T')]),
 ]
 
 # I3
 third = [
-    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic(dot_ls)]),
-    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'), TokenSintactic(dot_ls), TokenSintactic('+'), TokenSintactic('T')]),
+    Production([TokenSintactic('E'), TokenSintactic('-\\>'),
+               TokenSintactic('E'), TokenSintactic(dot_ls)]),
+    Production([TokenSintactic('E'), TokenSintactic('-\\>'), TokenSintactic('E'),
+               TokenSintactic(dot_ls), TokenSintactic('+'), TokenSintactic('T')]),
 ]
+
 
 class DotExpression():
     def __init__(self) -> None:
@@ -31,20 +41,75 @@ class DotExpression():
         self.next_value: TokenSintactic = None
 
 
-
 # **LR**
 # class Lr that recieves: the first list of productions to create the LR0 automata
 class Lr0():
     def __init__(self, initial_item: List[Production]) -> None:
-        self.terminals: List[TokenSintactic] = []
         self.start: TokenSintactic = None
         self.transitions: List[Transition] = []
         self.states: List[StateSintactic] = []
         self.alphabet: List[TokenSintactic] = self.get_alphabet(initial_item)
-        self.non_terminals: List[TokenSintactic] = self.get_non_terminals(initial_item)
+        self.non_terminals: List[TokenSintactic] = self.get_non_terminals(
+            initial_item)
         self.og_productions: List[Production] = initial_item
         self.create(initial_item)
-        self.parsing_table: Dict[int, Dict[str, str]] = self.create_parsing_table()
+        self.terminals: List[TokenSintactic] = self.get_terminals()
+        self.parsing_table: Dict[int, Dict[str, str]
+                                 ] = self.create_parsing_table()
+
+    def get_terminals(self) -> List[TokenSintactic]:
+        terminals = []
+        for token in self.alphabet:
+            if token not in self.non_terminals and token not in terminals:
+                terminals.append(token)
+        terminals.append(TokenSintactic(acceptance_simbol))
+        return terminals
+
+    def render_parsing_table(self) -> None:
+        dot = gv.Digraph(comment='LR0', filename='LR0.gv',
+                         format='pdf', node_attr={'shape': 'record'})
+        actions_number = len(self.terminals)
+        goto_number = len(self.non_terminals)
+        table_node = f'''<
+        <TABLE>
+    <TR>
+        <TD ROWSPAN="2">State</TD>
+        <TD COLSPAN="{actions_number}">Action</TD>
+        <TD COLSPAN="{goto_number}">Goto</TD>
+    </TR>
+    <TR>
+        {"".join([f"<TD>{terminal.value}</TD>" for terminal in self.terminals])}
+        {"".join([f"<TD>{non_terminal.value}</TD>" for non_terminal in self.non_terminals])}
+    </TR>
+    {self.get_table_rows()}
+</TABLE>>'''
+        dot.node('table', table_node)
+        dot.render('LEXER/LR_GRAPH/LR_PARSING_TABLE.gv', view=True)
+
+    def get_table_rows(self) -> str:
+        # regresar lo de get_table_row para cada state en self.states que no sea acceptance
+        return "".join([self.get_table_row(state) for state in self.states if not state.acceptance])
+        # return "".join([self.get_table_row(state) for state in self.states])
+
+    def get_table_row(self, state: StateSintactic) -> str:
+        id_ = state.get_state_number()
+        terminals = []
+        for terminal in self.terminals:
+            cell = '<TD> </TD>'
+            if terminal.value in self.parsing_table[id_]:
+                cell = f"<TD>{self.parsing_table[id_][terminal.value]}</TD>"
+            terminals.append(cell)
+        non_terminals = []
+        for non_terminal in self.non_terminals:
+            cell = '<TD> </TD>'
+            if non_terminal.value in self.parsing_table[id_]:
+                cell = f"<TD>{self.parsing_table[id_][non_terminal.value]}</TD>"
+            non_terminals.append(cell)
+        return f'''<TR>
+        <TD>{id_}</TD>
+        {"".join(terminals)}
+        {"".join(non_terminals)}
+    </TR>'''
 
     def create_parsing_table(self) -> Dict[int, Dict[str, str]]:
         parsing_table: Dict[StateSintactic, Dict[TokenSintactic, str]] = {}
@@ -54,23 +119,28 @@ class Lr0():
                 parsing_table[state_number] = {}
                 all_items = state.items.copy() + state.clousure.copy()
                 # get Shifts and acceptance
-                terminals: List[TokenSintactic] = self.get_next_terminal_dot_values(all_items)
+                terminals: List[TokenSintactic] = self.get_next_terminal_dot_values(
+                    all_items)
                 for terminal in terminals:
                     if Tj := self.get_transition(state, terminal):
                         Ij = Tj.destination
-                        parsing_table[state_number][terminal.value] = self.get_shift_string(Ij)
+                        parsing_table[state_number][terminal.value] = self.get_shift_string(
+                            Ij)
                 # get reductions
                 As = self.get_first_token_with_final_dot(all_items)
                 for Aprod in As:
                     A = Aprod.first_token()
                     for a in self.get_follow(A):
-                        parsing_table[state_number][a.value] = self.get_reduce_string(Aprod)
+                        parsing_table[state_number][a.value] = self.get_reduce_string(
+                            Aprod)
                 # go to part
                 for A in self.non_terminals:
                     if Tj := self.get_transition(state, A):
                         Ij = Tj.destination
-                        parsing_table[state_number][A.value] = self.get_goto_string(Ij)
+                        parsing_table[state_number][A.value] = self.get_goto_string(
+                            Ij)
         print('parser table', parsing_table)
+        return parsing_table
 
     def get_goto_string(self, state: StateSintactic) -> str:
         return f"{state.id[1:]}" if state.id[0] == 'I' else f"{state.id}"
@@ -102,7 +172,6 @@ class Lr0():
                     next_dot_values.append(next_token)
         return next_dot_values
 
-
     def get_transition(self, origin: StateSintactic, simbol: TokenSintactic) -> Transition:
         return next(
             (
@@ -133,22 +202,22 @@ class Lr0():
         return [
             Production(
                 [TokenSintactic(f"{first_expression.value}'"),
-                TokenSintactic(arrow),
-                TokenSintactic(dot_ls),
-                TokenSintactic(first_expression.value), TokenSintactic(acceptance_simbol)]
+                 TokenSintactic(arrow),
+                 TokenSintactic(dot_ls),
+                 TokenSintactic(first_expression.value), TokenSintactic(acceptance_simbol)]
             )
         ]
-    
+
     def is_same_list_productions(self, first: List[Production], second: List[Production]) -> bool:
         if len(first) != len(second):
             return False
         return all(item in second for item in first)
-    
+
     def is_in_list_production(self, production: Production, productions: List[List[Production]]) -> bool:
         return any(
             self.is_same_list_productions(item, production) for item in productions
         )
-    
+
     def print_list_production(self, productions: List[Production]) -> None:
         print("List of productions")
         for item in productions:
@@ -212,7 +281,7 @@ class Lr0():
         aumented_clousure = self.closure(state.items)
         state.clousure = aumented_clousure
         return state
-    
+
     def goTo(self, listOfItems: List[Production], token: TokenSintactic) -> List[Production]:
         listOfItem = listOfItems.copy()
         I: List[Production] = []
@@ -224,11 +293,12 @@ class Lr0():
             ):
                 temp = Production()
                 temp.value = item.value.copy()
-                temp.value[index_dot], temp.value[index_dot + 1] = item.value[index_dot + 1], item.value[index_dot]
+                temp.value[index_dot], temp.value[index_dot +
+                                                  1] = item.value[index_dot + 1], item.value[index_dot]
                 I.append(temp)
         # return self.closure(I)
         return I
-    
+
     def get_grammar(self, items: List[Production]) -> List[TokenSintactic]:
         grammar: List[TokenSintactic] = []
         for item in items:
@@ -239,9 +309,9 @@ class Lr0():
                 ):
                     grammar.append(dot_expression.next_value)
         return grammar
-    
+
     def closure(self, listOfItems: List[Production]) -> List[Production]:
-        J:List[Production] = listOfItems.copy()
+        J: List[Production] = listOfItems.copy()
         for item in J:
             if dot_expression := self.get_dot_expression(item.value):
                 for production in self.og_productions:
@@ -262,7 +332,8 @@ class Lr0():
             if token.value == dot_ls:
                 dot_expression = DotExpression()
                 dot_expression.index_dot = index
-                dot_expression.next_value =  items[index + 1] if index + 1 < len(items) else None
+                dot_expression.next_value = items[index +
+                                                  1] if index + 1 < len(items) else None
                 return dot_expression
         return None
 
@@ -284,10 +355,10 @@ class Lr0():
             if element != X:
                 first_values += self.get_first(element)
         return first_values
-        
+
     def get_start_simbol(self) -> TokenSintactic:
         return self.og_productions[0].first_token()
-    
+
     def get_start_production_simbol_that_ends_with(self, X: TokenSintactic) -> List[Production]:
         start_production_symbols: List[Production] = []
         already_added = []
@@ -296,13 +367,13 @@ class Lr0():
                 start_production_symbols.append(production.first_token())
                 already_added.append(production.first_token().value)
         return start_production_symbols
-    
+
     def get_next_symbols(self, X: TokenSintactic) -> List[TokenSintactic]:
         next_symbols: List[TokenSintactic] = []
         already_added = []
         for production in self.og_productions:
             if X in production:
-                if next_token:= production.next_token(X):
+                if next_token := production.next_token(X):
                     next_symbols.append(next_token)
                     already_added.append(next_token.value)
         return next_symbols
@@ -311,22 +382,26 @@ class Lr0():
         # ! revisar si solo se le puede sacar follow a los no terminales
         follow_values: List[TokenSintactic] = []
         if X == self.get_start_simbol():
-            follow_values+= [TokenSintactic('$')]
-        if start_symbols:= self.get_start_production_simbol_that_ends_with(X):
+            follow_values += [TokenSintactic('$')]
+        if start_symbols := self.get_start_production_simbol_that_ends_with(X):
             for start_symbol in start_symbols:
-                follow_values += self.get_follow(start_symbol)
-        if next_symbols:= self.get_next_symbols(X):
+                if start_symbol != X:
+                    follow_values += self.get_follow(start_symbol)
+        if next_symbols := self.get_next_symbols(X):
             for next_symbol in next_symbols:
-                follow_values += self.get_first(next_symbol)
+                if next_symbol != X:
+                    follow_values += self.get_first(next_symbol)
         return follow_values
 
     def graph(self) -> None:
-        dot = gv.Digraph(comment='LR0', filename='LR0.gv', format='pdf', node_attr={'shape': 'record', 'style': 'rounded'})
+        dot = gv.Digraph(comment='LR0', filename='LR0.gv', format='pdf', node_attr={
+                         'shape': 'record', 'style': 'rounded'})
         # Nodes
         for state in self.states:
             dot.node(state.id, state.state_label(), shape=state.type.name)
-        
+
         # Edges
         for transition in self.transitions:
-            dot.edge(transition.origin.id, transition.destination.id, transition.simbol.value)
+            dot.edge(transition.origin.id, transition.destination.id,
+                     transition.simbol.value)
         dot.render('LEXER/LR_GRAPH/LR0.gv', view=True)

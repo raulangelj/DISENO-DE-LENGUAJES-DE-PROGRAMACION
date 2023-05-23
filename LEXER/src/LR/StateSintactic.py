@@ -13,12 +13,17 @@ class StateSintactic():
         self.items: List[Production] = []
         self.clousure: List[Production] = []
         self.type: str = type
+        self.acceptance = False
 
     def change_acceptance(self) -> None:
         self.type = state_types.plain
         self.clousure = []
         self.items = []
         self.id = 'accept'
+        self.acceptance = True
+    
+    def get_state_number(self) -> int:
+        return int(self.id[1:])
 
     def state_label(self) -> str:
         if self.type == state_types.plain:

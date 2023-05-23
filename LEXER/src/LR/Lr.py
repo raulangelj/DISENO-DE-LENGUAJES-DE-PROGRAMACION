@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Dict
 from src.LR.TokenSintactic import TokenSintactic
 from src.LR.Production import Production
 from src.LR.StateSintactic import StateSintactic, state_types
@@ -44,6 +44,76 @@ class Lr0():
         self.non_terminals: List[TokenSintactic] = self.get_non_terminals(initial_item)
         self.og_productions: List[Production] = initial_item
         self.create(initial_item)
+        self.parsing_table: Dict[int, Dict[str, str]] = self.create_parsing_table()
+
+    def create_parsing_table(self) -> Dict[int, Dict[str, str]]:
+        parsing_table: Dict[StateSintactic, Dict[TokenSintactic, str]] = {}
+        for state in self.states:
+            if not state.acceptance:
+                state_number = state.get_state_number()
+                parsing_table[state_number] = {}
+                all_items = state.items.copy() + state.clousure.copy()
+                # get Shifts and acceptance
+                terminals: List[TokenSintactic] = self.get_next_terminal_dot_values(all_items)
+                for terminal in terminals:
+                    if Tj := self.get_transition(state, terminal):
+                        Ij = Tj.destination
+                        parsing_table[state_number][terminal.value] = self.get_shift_string(Ij)
+                # get reductions
+                As = self.get_first_token_with_final_dot(all_items)
+                for Aprod in As:
+                    A = Aprod.first_token()
+                    for a in self.get_follow(A):
+                        parsing_table[state_number][a.value] = self.get_reduce_string(Aprod)
+                # go to part
+                for A in self.non_terminals:
+                    if Tj := self.get_transition(state, A):
+                        Ij = Tj.destination
+                        parsing_table[state_number][A.value] = self.get_goto_string(Ij)
+        print('parser table', parsing_table)
+
+    def get_goto_string(self, state: StateSintactic) -> str:
+        return f"{state.id[1:]}" if state.id[0] == 'I' else f"{state.id}"
+
+    def get_og_production_index(self, production: Production) -> int:
+        index = -1
+        for og_production in self.og_productions:
+            index += 1
+            if og_production == production:
+                return index
+
+    def get_reduce_string(self, production: Production) -> str:
+        return f"r{self.get_og_production_index(production) + 1}"
+
+    def get_first_token_with_final_dot(self, items: List[Production]) -> List[Production]:
+        result_items: List[Production] = []
+        for item in items:
+            i = Production(item.value.copy()[:-1])
+            if item.has_final_dot() and i not in result_items:
+                result_items.append(i)
+        return result_items
+
+    def get_shift_string(self, state: StateSintactic) -> str:
+        return f"s{state.id[1:]}" if state.id[0] == 'I' else f"{state.id}"
+
+    def get_next_terminal_dot_values(self, items: List[Production]) -> List[TokenSintactic]:
+        next_dot_values: List[TokenSintactic] = []
+        for item in items:
+            if next_token := item.next_token(TokenSintactic(dot_ls)):
+                if next_token not in next_dot_values and next_token not in self.non_terminals:
+                    next_dot_values.append(next_token)
+        return next_dot_values
+
+
+    def get_transition(self, origin: StateSintactic, simbol: TokenSintactic) -> Transition:
+        return next(
+            (
+                transition
+                for transition in self.transitions
+                if transition.origin == origin and transition.simbol == simbol
+            ),
+            None,
+        )
 
     def get_alphabet(self, initial_items: List[Production]) -> List[TokenSintactic]:
         alphabet: List[TokenSintactic] = []
@@ -126,8 +196,6 @@ class Lr0():
         # add the states
         self.states = C
 
-
-
     def aumented_grammar(self, items: List[Production]) -> StateSintactic:
         first_expression = items[0].value[0]
         aumented_items = [Production(
@@ -173,8 +241,6 @@ class Lr0():
                 ):
                     grammar.append(dot_expression.next_value)
         return grammar
-
-    
     
     def closure(self, listOfItems: List[Production]) -> List[Production]:
         J:List[Production] = listOfItems.copy()
@@ -211,7 +277,6 @@ class Lr0():
                 first_elements.append(element)
         return first_elements
 
-    
     def get_first(self, X: TokenSintactic) -> List[TokenSintactic]:
         if X not in self.non_terminals:
             return [X]
@@ -222,9 +287,40 @@ class Lr0():
                 first_values += self.get_first(element)
         return first_values
         
+    def get_start_simbol(self) -> TokenSintactic:
+        return self.og_productions[0].first_token()
+    
+    def get_start_production_simbol_that_ends_with(self, X: TokenSintactic) -> List[Production]:
+        start_production_symbols: List[Production] = []
+        already_added = []
+        for production in self.og_productions:
+            if production.last_token() == X and production.first_token().value not in already_added:
+                start_production_symbols.append(production.first_token())
+                already_added.append(production.first_token().value)
+        return start_production_symbols
+    
+    def get_next_symbols(self, X: TokenSintactic) -> List[TokenSintactic]:
+        next_symbols: List[TokenSintactic] = []
+        already_added = []
+        for production in self.og_productions:
+            if X in production:
+                if next_token:= production.next_token(X):
+                    next_symbols.append(next_token)
+                    already_added.append(next_token.value)
+        return next_symbols
 
-
-
+    def get_follow(self, X: TokenSintactic) -> List[TokenSintactic]:
+        # ! revisar si solo se le puede sacar follow a los no terminales
+        follow_values: List[TokenSintactic] = []
+        if X == self.get_start_simbol():
+            follow_values+= [TokenSintactic('$')]
+        if start_symbols:= self.get_start_production_simbol_that_ends_with(X):
+            for start_symbol in start_symbols:
+                follow_values += self.get_follow(start_symbol)
+        if next_symbols:= self.get_next_symbols(X):
+            for next_symbol in next_symbols:
+                follow_values += self.get_first(next_symbol)
+        return follow_values
 
     def graph(self) -> None:
         dot = gv.Digraph(comment='LR0', filename='LR0.gv', format='pdf', node_attr={'shape': 'record', 'style': 'rounded'})

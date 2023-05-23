@@ -37,9 +37,6 @@ def main():
                     productions = yapar.get_productions()
                     lr0 = Lr0(productions)
                     lr0.graph()
-                    l = lr0.get_first(TokenSintactic('expression'))
-                    for i in l:
-                        print(i.value)
             except Exception as e:
                 print(e)
             # yapar.read_file('src/YAPAR/grammar.yapar')

@@ -76,9 +76,7 @@ class Lr0():
         return f"{state.id[1:]}" if state.id[0] == 'I' else f"{state.id}"
 
     def get_og_production_index(self, production: Production) -> int:
-        index = -1
-        for og_production in self.og_productions:
-            index += 1
+        for index, og_production in enumerate(self.og_productions):
             if og_production == production:
                 return index
 

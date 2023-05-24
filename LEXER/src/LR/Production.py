@@ -12,6 +12,9 @@ class Production():
 
     def add(self, token: TokenSintactic) -> None:
         self.value.append(token)
+
+    def get_absolute(self) -> int:
+        return sum(1 for _ in self.value[2:])
     
     def has_final_dot(self) -> bool:
         return self.value[-1].value == dot_ls

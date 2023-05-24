@@ -14,6 +14,22 @@ example_lr = [
     Production([TokenSintactic('F'), TokenSintactic('-\\>'), TokenSintactic('id')]),
 ]
 
+test = [
+    TokenSintactic('ID'),
+    TokenSintactic('TIMES'),
+    TokenSintactic('ID'),
+    TokenSintactic('PLUS'),
+    TokenSintactic('ID'),
+    TokenSintactic(acceptance_simbol),
+]
+
+test2 = [
+    TokenSintactic('ID'),
+    TokenSintactic('PLUS'),
+    TokenSintactic('PLUS'),
+    TokenSintactic(acceptance_simbol)
+]
+
 def main():
     running = True
     while running:
@@ -31,12 +47,14 @@ def main():
                     # yapar.read_file(file_path)
                     yapar.read_file('LEXER/Mocks/YAPAR/slr-1.yalp')
                     # check if all the tokens in yapar.get_tokens_array() are in tokens
-                    for token in yapar.get_tokens_array():
-                        if token.lower() not in tokens:
-                            raise Exception(f'Token {token} not found in tokens')
+                    # for token in yapar.get_tokens_array():
+                    #     if token.lower() not in tokens:
+                    #         raise Exception(f'Token {token} not found in tokens')
                     productions = yapar.get_productions()
                     lr0 = Lr0(productions)
                     lr0.graph()
+                    lr0.render_parsing_table()
+                    print(lr0.match(test2))
             except Exception as e:
                 print(e)
             # yapar.read_file('src/YAPAR/grammar.yapar')

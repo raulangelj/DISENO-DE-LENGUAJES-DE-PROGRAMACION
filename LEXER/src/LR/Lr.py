@@ -35,6 +35,7 @@ third = [
 ]
 
 
+
 class DotExpression():
     def __init__(self) -> None:
         self.index_dot: int = 0
@@ -56,6 +57,34 @@ class Lr0():
         self.terminals: List[TokenSintactic] = self.get_terminals()
         self.parsing_table: Dict[int, Dict[str, str]
                                  ] = self.create_parsing_table()
+    
+    def match(self, input_text: List[TokenSintactic]) -> bool:
+        original_input = input_text.copy()
+        stack = [0]
+        a = input_text[0]
+        finished = False
+        while not finished:
+            s = stack[-1]
+            if a.value not in self.parsing_table[s]:
+                # ! Error
+                return False
+            if 's' in self.parsing_table[s][a.value]:
+                stack.append(int(self.parsing_table[s][a.value][1:]))
+                input_text.pop(0)
+                if input_text:
+                    a = input_text[0]
+                else:
+                    return False
+            elif 'r' in self.parsing_table[s][a.value]:
+                production = self.og_productions[int(self.parsing_table[s][a.value][1:]) - 1]
+                absolute = production.get_absolute()
+                for _ in range(absolute):
+                    stack.pop()
+                t = stack[-1]
+                stack.append(int(self.parsing_table[t][production.first_token().value]))
+            elif 'accept' in self.parsing_table[s][a.value]:
+                finished = True
+        return True
 
     def get_terminals(self) -> List[TokenSintactic]:
         terminals = []

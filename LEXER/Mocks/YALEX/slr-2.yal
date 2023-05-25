@@ -15,10 +15,12 @@ let times = '*'
 let div = '/'
 let lparen = '('
 let rparen = ')'
+let equal = '='
 
 rule tokens = 
     ws        { print(WHITESPACE) }               (* Cambie por una acción válida, que devuelva el token *)
   | id        { print(ID) }
+  | equal    { print(EQUAL) }
   | number    { print(NUMBER) }
   | plus       { print(PLUS) }
   | minus       { print(MINUS) }

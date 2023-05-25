@@ -29,6 +29,14 @@
       "justMyCode": true
     },
     {
+      "name": "Python: Run final",
+      "type": "python",
+      "request": "launch",
+      "program": "LEXER/final.main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
       "name": "Python: Run yapar",
       "type": "python",
       "request": "launch",

@@ -168,7 +168,7 @@ class Lr0():
                         Ij = Tj.destination
                         parsing_table[state_number][A.value] = self.get_goto_string(
                             Ij)
-        print('parser table', parsing_table)
+        # print('parser table', parsing_table)
         return parsing_table
 
     def get_goto_string(self, state: StateSintactic) -> str:

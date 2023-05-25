@@ -2,7 +2,7 @@ from src.Convertor.Character import Character, character_types
 from src.Tree.Node import Node
 from src.Convertor.Parser import Parser
 from typing import Dict, List
-from src.YALEX.YALEX import ReturnModel
+from src.interfaces.yalex import ReturnModel
 import graphviz as gv
 
 

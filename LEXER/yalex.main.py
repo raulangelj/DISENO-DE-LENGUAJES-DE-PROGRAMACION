@@ -77,7 +77,7 @@ def main():
         if option == '1':
             try:
                 file_path = input('Ingrese la ruta del archivo: ')
-                # file_path = 'LEXER/Mocks/YALEX/slr-4.yal'
+                # file_path = 'LEXER/Mocks/YALEX/slr-1.yal'
                 algorithms = Algorithms()
                 yalex = Yalex(file_path)
                 yalex.read_file()

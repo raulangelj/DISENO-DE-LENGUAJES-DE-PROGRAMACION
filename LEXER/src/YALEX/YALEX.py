@@ -1,18 +1,17 @@
 from typing import List, Tuple
 from src.Convertor.Simbols import Operators
 from src.Convertor.Character import Character, character_types, Characters
+from src.Convertor.Parser import Parser
+from src.Convertor.ConvertorAlgorithms import Algorithms
+from src.Tree.Tree import Tree
+from src.Automata.DFA import DFA
 from termcolor import colored
+from src.scanner.scanner_parser import ScannerParser
+from src.interfaces.yalex import ReturnModel
 
 LINE_CLOSING = '\n'
 OPEN_COMMENT = '(*'
 CLOSE_COMMENT = '*)'
-
-
-class ReturnModel():
-    def __init__(self) -> None:
-        self.token_id = ''
-        self.value = ''
-        self.leave_index = -1
 
 
 class Yalex():
@@ -35,6 +34,27 @@ class Yalex():
             '\\v': ord('\v'),
         }
 
+    def generate_scanner(self) -> ScannerParser:
+        self.read_file()
+        algorithms = Algorithms()
+        header = self.comments[0].strip()
+        trailer = self.comments[-1].strip()
+        postfix = algorithms.get_result_postfix(self.expression)
+        tree = Tree(postfix=postfix)
+        tree.create_tree()
+        # tree.render_tree(tree.tree)
+        parser = Parser()
+        clean_infix = parser.remove_special_characters(self.expression)
+        new_postfix = algorithms.get_result_postfix(clean_infix)
+        tree_automata = Tree(new_postfix, self.rules)
+        tree_automata.create_tree()
+        # tree_automata.render_tree(tree_automata.tree)
+        tree_automata.followpos_recursive(tree_automata.tree)
+        adf = DFA()
+        adf.create_automata(postfix=new_postfix, tree=tree_automata, infix=clean_infix, originial=clean_infix)
+        # adf.create_graph()
+        return ScannerParser(adf, header, trailer)
+
     def read_file(self) -> None:
         filex_text = ''
         self.valid = True
@@ -43,19 +63,6 @@ class Yalex():
             for line in file:
                 for char in line:
                     filex_text += char
-                    # word += char
-                    # if word == 'rule ' or reading_rule:
-                    #     rule_text += char
-                    #     reading_rule = True
-                    #     if rule_text[-1] == LINE_CLOSING and rule_text[-2] == LINE_CLOSING:
-                    #         reading_rule = False
-                    #         self.rule_declaration(rule_text[1:])
-                    #         rule_text = ''
-                    #         break
-                    # elif word == 'let ':
-                    #     self.variable_declaration(line[4:]) # 4 because we already read the 'let ' word
-                    #     word = ''
-                    #     break
         keep_reading = True
         word = ''
         index = 0
@@ -98,13 +105,6 @@ class Yalex():
                     move = self.rule_declaration(filex_text[index:])
                     index += move
                     word = ''
-                    # rule_text += filex_text[index]
-                    # reading_rule = True
-                    # if rule_text[-1] == LINE_CLOSING and rule_text[-2] == LINE_CLOSING:
-                    #     reading_rule = False
-                    #     move = self.rule_declaration(rule_text[1:])
-                    #     index += move
-                    #     rule_text = ''
                 elif word[-4:] == 'let ':
                     # 4 because we already read the 'let ' word
                     index += 1  # add 1 because we already read the ' ' word

@@ -2,6 +2,7 @@ from src.Tokens.Tokens import *
 from src.YALEX.YALEX import Yalex
 from src.YAPAR.YAPAR import Yapar
 from src.LR.Lr import Lr0
+from termcolor import colored
 import os
 import glob
 import pickle
@@ -53,7 +54,7 @@ def main():
         # input_txt = input('Ingrese la ruta del archivo a analizar: ')
         # scanner.analize(input_txt)
     except Exception as e:
-        print(e)    
+        print(colored(e, 'red'))    
 
 if __name__ == '__main__':
     main()

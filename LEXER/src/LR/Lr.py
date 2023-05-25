@@ -160,6 +160,10 @@ class Lr0():
                 for Aprod in As:
                     A = Aprod.first_token()
                     for a in self.get_follow(A):
+                        # raise Exception 'Grammar Conflict'
+                        if a.value in parsing_table[state_number]:
+                            raise Exception(
+                                f'Grammar Conflict in state {state_number} with {a.value}')
                         parsing_table[state_number][a.value] = self.get_reduce_string(
                             Aprod)
                 # go to part
@@ -291,6 +295,7 @@ class Lr0():
 
         # add the states
         self.states = C
+        self.graph()
 
     def aumented_grammar(self, items: List[Production]) -> StateSintactic:
         first_expression = items[0].value[0]

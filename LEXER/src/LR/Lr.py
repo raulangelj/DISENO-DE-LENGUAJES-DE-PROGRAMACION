@@ -407,15 +407,17 @@ class Lr0():
                     already_added.append(next_token.value)
         return next_symbols
 
-    def get_follow(self, X: TokenSintactic) -> List[TokenSintactic]:
+    def get_follow(self, X: TokenSintactic, already_evaluated: List[TokenSintactic] = []) -> List[TokenSintactic]:
         # ! revisar si solo se le puede sacar follow a los no terminales
         follow_values: List[TokenSintactic] = []
         if X == self.get_start_simbol():
             follow_values += [TokenSintactic('$')]
         if start_symbols := self.get_start_production_simbol_that_ends_with(X):
+            evaluated = [X]
             for start_symbol in start_symbols:
-                if start_symbol != X:
-                    follow_values += self.get_follow(start_symbol)
+                if start_symbol != X and start_symbol not in already_evaluated:
+                    evaluated.append(start_symbol)
+                    follow_values += self.get_follow(start_symbol, evaluated)
         if next_symbols := self.get_next_symbols(X):
             for next_symbol in next_symbols:
                 if next_symbol != X:

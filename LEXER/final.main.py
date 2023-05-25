@@ -36,6 +36,7 @@ def main():
                 raise Exception(f'Token {token} not found in tokens')
         productions = yapar.get_productions()
         scanner.lr = Lr0(productions)
+        scanner.lr.render_parsing_table()
         # Mover al otro archivo
         if os.path.exists(f'{RUTE_DATA}'):
             shutil.rmtree(f'{RUTE_DATA}')

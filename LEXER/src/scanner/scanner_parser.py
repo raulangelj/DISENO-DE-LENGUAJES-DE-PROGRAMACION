@@ -3,6 +3,7 @@ from src.Tokens.Tokens import *
 from src.Convertor.Character import *
 from src.Automata.DFA import tokenListModel
 from src.LR.TokenSintactic import TokenSintactic
+from termcolor import colored
 from src.LR.Lr import Lr0
 import os
 import glob
@@ -12,8 +13,8 @@ import shutil
 class ScannerParser():
     def __init__(self, adf_yalex: DFA, header:str, trailer: str) -> None:
         self.adf_yalex = adf_yalex
-        self.header = header
-        self.trailer = trailer
+        self.header = header[2:-2].strip() if header else ''
+        self.trailer = trailer[2:-2].strip() if trailer else ''
         self.lr: Lr0 = None
     
     def analize(self, file_to_scan: str) -> None:
@@ -34,7 +35,10 @@ class ScannerParser():
                 print(f'TOKEN NO VALIDO: {token.characters}')
         self.lr.render_parsing_table()
         adapt_tokens = self.adaptor_tokenListModel(tokens)
-        print(self.lr.match(adapt_tokens))
+        if self.lr.match(adapt_tokens):
+            print(colored('Is valid!', 'green'))
+        else:
+            print(colored('Eror sintactico!', 'red'))
         
 
     def adaptor_tokenListModel(self, tokens:  List[tokenListModel]) -> List[TokenSintactic]:

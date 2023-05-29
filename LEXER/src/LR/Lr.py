@@ -68,6 +68,7 @@ class Lr0():
             if a.value not in self.parsing_table[s]:
                 # ! Error
                 return False
+            print(f's: {s}, a: {a.value}, action: {self.parsing_table[s][a.value]}')
             if 's' in self.parsing_table[s][a.value]:
                 stack.append(int(self.parsing_table[s][a.value][1:]))
                 input_text.pop(0)
@@ -163,7 +164,7 @@ class Lr0():
                         # raise Exception 'Grammar Conflict'
                         if a.value in parsing_table[state_number]:
                             raise Exception(
-                                f'Grammar Conflict in state {state_number} with {a.value}')
+                                f'Grammar Conflict in state {state_number} with {a.value}, ({parsing_table[state_number][a.value]}, {self.get_reduce_string(                            Aprod)})')
                         parsing_table[state_number][a.value] = self.get_reduce_string(
                             Aprod)
                 # go to part
